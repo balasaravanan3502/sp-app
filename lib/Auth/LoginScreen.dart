@@ -50,17 +50,111 @@ class _LoginScreenState extends State<LoginScreen> {
         resizeToAvoidBottomInset: false,
         body: SafeArea(
           child: Container(
-              child: Column(
-            children: [
-              Text(
-                'Lets Sign you in',
-                style: TextStyle(
-                  fontSize: 27,
-                  fontWeight: FontWeight.w700,
+            padding: EdgeInsets.all(30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * .1,
+                    ),
+                    Text(
+                      '  Welcome Back',
+                      style: TextStyle(
+                        fontSize: 37,
+                        color: Color(0xff2C364E),
+                        fontFamily: 'Lato',
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Let\'s sign you in.',
+                      style: TextStyle(
+                        fontSize: 32,
+                        color: Color(0xff2C364E),
+                        fontFamily: 'Lato',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          )),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * .1,
+                ),
+                Column(
+                  children: [
+                    TextFormField(
+                      controller: _userId,
+                      decoration: TextFieldDecoration.copyWith(
+                        hintText: 'Email',
+                      ),
+                      cursorColor: Color(0xff3B73E9),
+                      onChanged: (value) {},
+                    ),
+                    SizedBox(
+                      height: 25,
+                    ),
+                    TextFormField(
+                      controller: _password,
+                      obscureText: !isObscure,
+                      decoration: TextFieldDecoration.copyWith(
+                        hintText: 'Password',
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              isObscure = !isObscure;
+                            });
+                          },
+                          icon: Icon(
+                            !isObscure
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                            color: Color(0xff2C364E),
+                          ),
+                        ),
+                      ),
+                      cursorColor: Color(0xff3B73E9),
+                      onChanged: (value) {},
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * .1,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          primary: Color(0xff3B73E9),
+                        ),
+                        onPressed: () {
+                          isLoading = true;
+                          _submitted();
+                          isLoading = false;
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(13.0),
+                          child: Text(
+                            'LOGIN',
+                            style: TextStyle(
+                              fontSize: 17,
+                              color: Colors.white,
+                              letterSpacing: 0.7,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

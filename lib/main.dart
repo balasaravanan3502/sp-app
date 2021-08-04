@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sp_app/Auth/LoginScreen.dart';
-import 'package:sp_app/Modules/Staff/Screens/HomeScreen.dart';
 
 import 'Provider/Auth.dart';
 
@@ -28,6 +27,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.blue,
+          fontFamily: 'Lato',
         ),
         routes: {},
         home: LandingScreen(),
@@ -62,7 +62,7 @@ class _LandingScreenState extends State<LandingScreen> {
           // if (snapshot.data == 'home') return Home();
           // if (snapshot.data == 'signIn') return FormScreen();
 
-          return SFHomeScreen();
+          return LoginScreen();
         });
   }
 }
