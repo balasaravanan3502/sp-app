@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sp_app/Auth/LoginScreen.dart';
+import 'package:sp_app/Modules/Shared/Screens/SHHomeScreen.dart';
 
 import 'Provider/Auth.dart';
 
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Lato',
         ),
         routes: {},
-        home: LandingScreen(),
+        home: SHHomeScreen(),
       ),
     );
   }

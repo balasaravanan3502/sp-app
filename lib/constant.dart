@@ -18,3 +18,11 @@ const TextFieldDecoration = InputDecoration(
     borderRadius: BorderRadius.all(Radius.circular(20.0)),
   ),
 );
+
+final circleavatar = Container(
+  margin: EdgeInsets.all(6.0),
+  child: CircleAvatar(
+    radius: 30.0,
+    backgroundColor: Colors.indigo,
+  ),
+);
