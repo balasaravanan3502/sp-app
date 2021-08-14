@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sp_app/Auth/LoginScreen.dart';
+import 'package:sp_app/Modules/Shared/Screens/SHCreateFormScreen.dart';
 import 'package:sp_app/Modules/Shared/Screens/SHHomeScreen.dart';
+import 'package:sp_app/Modules/Students/Screens/STSubmitFromScreen.dart';
 
 import 'Provider/Auth.dart';
 
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Lato',
         ),
         routes: {},
-        home: SHHomeScreen(),
+        home: STSubmitFormScreen(),
       ),
     );
   }
@@ -48,7 +50,6 @@ class _LandingScreenState extends State<LandingScreen> {
     if (sharedpref.getString('uid') != null) {
       // final provider = Provider.of<Data>(context, listen: false);
       // await provider.fetchData();
-      // await provider.grahakMasterData();
       return 'home';
     } else {
       return 'signIn';

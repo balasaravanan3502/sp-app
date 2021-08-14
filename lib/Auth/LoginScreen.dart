@@ -126,10 +126,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(40),
+                        color: Color(0xff6E7FFC),
+                      ),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           elevation: 0,
-                          primary: Color(0xff3B73E9),
+                          primary: Colors.transparent,
+                          shape: StadiumBorder(),
                         ),
                         onPressed: () {
                           isLoading = true;

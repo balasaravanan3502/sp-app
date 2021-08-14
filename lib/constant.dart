@@ -26,3 +26,19 @@ final circleavatar = Container(
     backgroundColor: Colors.indigo,
   ),
 );
+
+const kTextFieldDecoration = InputDecoration(
+  labelStyle: TextStyle(
+    color: Color(0xff1C1C1C),
+    fontSize: 18,
+  ),
+  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+  enabledBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Color(0xff2598FA), width: 1.0),
+    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Color(0xff2598FA), width: 1.5),
+    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+  ),
+);
