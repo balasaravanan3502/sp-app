@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Lato',
         ),
         routes: {},
-        home: STSubmitFormScreen(),
+        home: SHHomeScreen(),
       ),
     );
   }

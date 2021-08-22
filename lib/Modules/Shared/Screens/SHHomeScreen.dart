@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import "package:sp_app/Helpers/Capitalize.dart";
+import 'package:sp_app/Modules/Staff/Widgets/neumorphic_expenses/pie_chart_view.dart';
 
 import '../../../constant.dart';
 
@@ -14,20 +17,12 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
   final now = DateTime.now();
   var selected;
   int currentIndex = 0;
-
+  var data = [
+    {
+      "title": "NPTEL form",
+    }
+  ];
   var calender = [];
-  final style = TextStyle(
-    fontWeight: FontWeight.w500,
-    letterSpacing: 2.0,
-    fontSize: 10.0,
-    fontFamily: 'Kameron',
-  );
-  final styleBold = TextStyle(
-    fontWeight: FontWeight.w500,
-    letterSpacing: 2.0,
-    fontSize: 10.0,
-    fontFamily: 'Kameron',
-  );
 
   @override
   void initState() {
@@ -206,57 +201,137 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
                     ),
                   ),
                   Container(
-                      padding: EdgeInsets.all(10.0),
-                      margin: EdgeInsets.only(left: 20.0, right: 20.0),
-                      height: MediaQuery.of(context).size.height * 0.13,
-                      width: MediaQuery.of(context).size.width * 1,
-                      decoration: BoxDecoration(
-                        color: Colors.lightBlueAccent,
-                        borderRadius: BorderRadius.circular(25.0),
+                    padding: EdgeInsets.all(10.0),
+                    margin: EdgeInsets.only(left: 20.0, right: 20.0),
+                    height: MediaQuery.of(context).size.height * 0.13,
+                    width: MediaQuery.of(context).size.width * 1,
+                    decoration: BoxDecoration(
+                      // color: Colors.lightBlueAccent,
+                      borderRadius: BorderRadius.circular(25.0),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xff6E7FFC), Colors.lightBlueAccent],
                       ),
-                      child: Row(
-                        children: [
-                          Container(
-                            child: circleavatar,
-                          ),
-                          Container(
-                            margin: EdgeInsets.all(10.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  "you have got two task                       "
-                                      .toUpperCase(),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          child: circleavatar,
+                        ),
+                        Container(
+                          margin: EdgeInsets.all(10.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "You have got 2 task",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 19,
+                                  color: Colors.white,
                                 ),
-                                Text(
-                                  "check your task for today".toUpperCase(),
-                                  style: styleBold,
+                              ),
+                              Text(
+                                "Check your task for today".toUpperCase(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.white,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      )),
+                        ),
+                      ],
+                    ),
+                  ),
                   Container(
                     margin: EdgeInsets.only(top: 20.0, bottom: 20.0),
                     child: ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
-                        return new Container(
-                          width: 50.0,
-                          height: 110.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30.0),
-                            color: Colors.indigo,
-                          ),
-                          margin: EdgeInsets.only(
-                              top: 5.0, bottom: 5.0, right: 15.0, left: 15.0),
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: new Container(
-                            width: 40.0,
-                            height: 100.0,
-                            child: Text('Hello'),
-                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            height: 150,
+                            padding: const EdgeInsets.all(8.0),
+                            child: Neumorphic(
+                              style: NeumorphicStyle(
+                                shape: NeumorphicShape.flat,
+                                depth: 20, //customize depth here
+                                color: Color.fromRGBO(193, 214, 233, 1),
+                                border: NeumorphicBorder(
+                                  color: Color.fromRGBO(193, 214, 233, 1),
+                                  width: 0.8,
+                                ),
+                              ),
+                              child: new Container(
+                                width: 40.0,
+                                height: 100.0,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 8.0,
+                                        left: 24,
+                                      ),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'NPTEL form'.capitalizeFirstofEach,
+                                            style: TextStyle(
+                                              fontSize: 26,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.brown,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            'III CSE A',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.brown,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            '17 jan',
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.brown,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          .13,
+                                    ),
+                                    PieChartView([]),
+                                  ],
+                                ),
+                                alignment: Alignment.center,
+                              ),
+                            ),
                           ),
                         );
                       },
