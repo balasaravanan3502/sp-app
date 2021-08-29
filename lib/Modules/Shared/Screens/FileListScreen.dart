@@ -29,7 +29,7 @@ class _DisplayFileState extends State<DisplayFile> {
   File? file;
   bool uploadScreen = false;
   bool uploadLoading = false;
-  bool successFul = true;
+  bool successFul = false;
   String ref = '';
   String name = '';
   String fileNameR = '';
@@ -73,7 +73,6 @@ class _DisplayFileState extends State<DisplayFile> {
                 itemCount: materials.length,
                 itemBuilder: (BuildContext context, int index) {
                   final fileDetails = materials[index];
-                  print(fileDetails);
                   return AnimationConfiguration.staggeredList(
                     position: index,
                     duration: const Duration(milliseconds: 500),
@@ -299,7 +298,7 @@ class _DisplayFileState extends State<DisplayFile> {
                         children: [
                           Center(
                             child: Container(
-                              height: MediaQuery.of(context).size.height * 0.5,
+                              height: MediaQuery.of(context).size.height * 0.4,
                               width: MediaQuery.of(context).size.width * 0.8,
                               child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -319,8 +318,9 @@ class _DisplayFileState extends State<DisplayFile> {
                                                 vertical: 30.0,
                                                 horizontal: 0.0),
                                             child: Text(
-                                              'File is successfully uploaded,thank you'
+                                              'File is successfully uploaded'
                                                   .toUpperCase(),
+                                              textAlign: TextAlign.center,
                                               style: TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold,
@@ -334,7 +334,7 @@ class _DisplayFileState extends State<DisplayFile> {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(40.0),
+                                  Radius.circular(20.0),
                                 ),
                               ),
                             ),

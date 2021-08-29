@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Lato',
         ),
         routes: {},
-        home: SHHomeScreen(),
+        home: LandingScreen(),
       ),
     );
   }
@@ -52,7 +52,8 @@ class LandingScreen extends StatefulWidget {
 class _LandingScreenState extends State<LandingScreen> {
   Future<String> landingPageDecider() async {
     final SharedPreferences sharedpref = await SharedPreferences.getInstance();
-    if (sharedpref.getString('uid') != null) {
+    print(sharedpref.getString('id'));
+    if (sharedpref.getString('id') != null) {
       // final provider = Provider.of<Data>(context, listen: false);
       // await provider.fetchData();
       return 'home';
@@ -66,7 +67,7 @@ class _LandingScreenState extends State<LandingScreen> {
     return FutureBuilder<String>(
         future: landingPageDecider(),
         builder: (context, AsyncSnapshot<String> snapshot) {
-          // if (snapshot.data == 'home') return Home();
+          if (snapshot.data == 'home') return SHHomeScreen();
           // if (snapshot.data == 'signIn') return FormScreen();
 
           return LoginScreen();

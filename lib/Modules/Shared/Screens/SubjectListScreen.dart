@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:sp_app/Modules/Shared/Screens/FileListScreen.dart';
 import 'package:sp_app/Helpers/ConstantData.dart';
 import 'package:sliver_header_delegate/sliver_header_delegate.dart';
@@ -27,46 +28,58 @@ class _SubjectListScreenState extends State<SubjectListScreen> {
             ),
           ),
         ),
-        SliverPadding(
-          padding: const EdgeInsets.all(15),
-          sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 200.0,
-              mainAxisSpacing: 7,
-              crossAxisSpacing: 7,
-              childAspectRatio: 1,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => Container(
-                margin: EdgeInsets.all(10.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                    ),
-                    primary: Colors.white,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DisplayFile(subjectList[index]),
+        AnimationLimiter(
+          child: SliverPadding(
+            padding: const EdgeInsets.all(15),
+            sliver: SliverGrid(
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200.0,
+                mainAxisSpacing: 7,
+                crossAxisSpacing: 7,
+                childAspectRatio: 1,
+              ),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => AnimationConfiguration.staggeredList(
+                  position: index,
+                  duration: const Duration(milliseconds: 375),
+                  child: SlideAnimation(
+                    verticalOffset: 50.0,
+                    child: FadeInAnimation(
+                      child: Container(
+                        margin: EdgeInsets.all(10.0),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            primary: Colors.white,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    DisplayFile(subjectList[index]),
+                              ),
+                            );
+                          },
+                          child: Center(
+                            child: Text(
+                              subjectList[index],
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.indigo),
+                            ),
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                  child: Center(
-                    child: Text(
-                      subjectList[index],
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.indigo),
                     ),
                   ),
                 ),
+                childCount: subjectList.length,
               ),
-              childCount: subjectList.length,
             ),
           ),
         ),

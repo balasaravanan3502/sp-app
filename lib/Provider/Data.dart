@@ -8,23 +8,21 @@ class Data extends ChangeNotifier {
 
   String id = '';
 
-  Future<String> login(String id, String pass, bool remember) async {
+  Future<dynamic> login(body) async {
     NetworkHelper networkHelper = NetworkHelper();
 
-    var response = await networkHelper
-        .postMethod('login.php', {"user_id": id, "password": pass});
+    var response = await networkHelper.postMethod('user-login', body);
 
     print(response);
-    this.id = id;
-    if (remember) {
-      id = response['user_id'];
+    if (response['code'] == '500') return response;
+    this.id = response['id'];
 
-      final SharedPreferences sharedpref =
-          await SharedPreferences.getInstance();
-      sharedpref.setString('uid', id);
-    }
+    final SharedPreferences sharedpref = await SharedPreferences.getInstance();
+    sharedpref.setString('id', response['id']);
+    sharedpref.setString('email', response['email']);
+    sharedpref.setString('role', response['role']);
 
-    return response['code'];
+    return response;
   }
 
   Future<List> getMaterialBySuject(body) async {
