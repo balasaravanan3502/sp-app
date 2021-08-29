@@ -29,7 +29,7 @@ class _DisplayFileState extends State<DisplayFile> {
   File? file;
   bool uploadScreen = false;
   bool uploadLoading = false;
-  bool successFul = false;
+  bool successFul = true;
   String ref = '';
   String name = '';
   String fileNameR = '';
@@ -52,82 +52,93 @@ class _DisplayFileState extends State<DisplayFile> {
     return new FutureBuilder(
         future: futureProvider(),
         builder: (context, snapshot) {
-          if (snapshot.data == 'completed')
-            return GridView.builder(
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: MediaQuery.of(context).size.width * 0.8,
-                childAspectRatio: 3 / 3,
-                crossAxisSpacing: 15,
-                mainAxisSpacing: 20,
-              ),
-              itemCount: materials.length,
-              itemBuilder: (BuildContext context, int index) {
-                final fileDetails = materials[index];
-                print(fileDetails);
-                return AnimationConfiguration.staggeredList(
-                  position: index,
-                  duration: const Duration(milliseconds: 500),
-                  child: SlideAnimation(
-                    verticalOffset: 50.0,
-                    child: FadeInAnimation(
-                      child: Container(
-                        margin: EdgeInsets.all(10.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 20,
-                            primary: Colors.white,
-                            side: BorderSide(
-                              width: 1.5,
-                              color: Colors.black,
+          if (snapshot.data == 'completed') {
+            if (materials.length == 0)
+              return Center(
+                child: Text(
+                  'No Materials Available',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+              );
+            else
+              return GridView.builder(
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: MediaQuery.of(context).size.width * 0.8,
+                  childAspectRatio: 3 / 3,
+                  crossAxisSpacing: 15,
+                  mainAxisSpacing: 20,
+                ),
+                itemCount: materials.length,
+                itemBuilder: (BuildContext context, int index) {
+                  final fileDetails = materials[index];
+                  print(fileDetails);
+                  return AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(milliseconds: 500),
+                    child: SlideAnimation(
+                      verticalOffset: 50.0,
+                      child: FadeInAnimation(
+                        child: Container(
+                          margin: EdgeInsets.all(10.0),
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              elevation: 20,
+                              primary: Colors.white,
+                              side: BorderSide(
+                                width: 1.5,
+                                color: Colors.black,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0)),
                             ),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0)),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => DisplayPDF(
-                                    url: fileDetails['materialLink'],
-                                    name: fileDetails['materialName']),
-                              ),
-                            );
-                          },
-                          child: Column(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(top: 90.0),
-                                child: Text(
-                                  fileDetails['materialName'],
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                  maxLines: 1,
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DisplayPDF(
+                                      url: fileDetails['materialLink'],
+                                      name: fileDetails['materialName']),
                                 ),
-                              ),
-                              SizedBox(
-                                height: 65,
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(left: 60.0),
-                                child: Text(
-                                  'Created by: ARJUN',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
+                              );
+                            },
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    child: Text(
+                                      fileDetails['materialName'],
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
+                                      maxLines: 1,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                                Container(
+                                  padding: EdgeInsets.only(left: 60.0),
+                                  child: Text(
+                                    'Created by: ARJUN',
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-            );
+                  );
+                },
+              );
+          }
 
           return Center(
             child: Center(
@@ -171,76 +182,50 @@ class _DisplayFileState extends State<DisplayFile> {
         file != null ? Path.basename(file!.path) : 'No File Selected';
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.subjectName),
+        ),
         body: LoadingOverlay(
-            color: Colors.lightBlue,
+            color: Colors.black,
             progressIndicator: uploadLoading
-                ? Stack(
-                    children: [
-                      Center(
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          child: Column(
+                ? Container(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.1,
+                            child: Text(
+                              'are you to sure to upload the file?'
+                                  .toUpperCase(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.025,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: MediaQuery.of(context).size.height * .13,
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Container(
-                                padding:
-                                    EdgeInsets.only(top: 100.0, left: 30.0),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.19,
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                child: Text(
-                                  'are you to sure to upload the file'
-                                      .toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize:
-                                        MediaQuery.of(context).size.height *
-                                            0.025,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.only(
-                                    left: MediaQuery.of(context).size.height *
-                                        0.04),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.08,
-                                width: MediaQuery.of(context).size.width * 0.6,
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(40.0)),
-                                  border: Border.all(
-                                      color: Colors.black, width: 4.0),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.file_present),
-                                    SizedBox(
-                                      width: 10.0,
-                                    ),
-                                    Container(
-                                      child: Text(
-                                        '$fileName'.toUpperCase(),
-                                        style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.02,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
+                              Icon(Icons.file_present),
                               SizedBox(
-                                height: 25.0,
+                                width: 10.0,
                               ),
-                              ElevatedButton(
+                              Container(
+                                width: MediaQuery.of(context).size.width * .4,
                                 child: Text(
-                                  'YEs'.toUpperCase(),
+                                  '$fileName'.toUpperCase(),
+                                  maxLines: 5,
                                   style: TextStyle(
                                       fontSize:
                                           MediaQuery.of(context).size.height *
@@ -248,58 +233,66 @@ class _DisplayFileState extends State<DisplayFile> {
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black),
                                 ),
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.white,
-                                  side: BorderSide(
-                                    width: 3.0,
-                                    color: Colors.black,
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 20.0, horizontal: 60.0),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(30.0)),
-                                ),
-                                onPressed: uploadFile,
-                              ),
-                              SizedBox(
-                                height: 25.0,
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() => uploadScreen = false);
-                                },
-                                child: Text(
-                                  'no'.toUpperCase(),
-                                  style: TextStyle(
-                                      fontSize:
-                                          MediaQuery.of(context).size.height *
-                                              0.02,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  side: BorderSide(
-                                    width: 3.0,
-                                    color: Colors.black,
-                                  ),
-                                  primary: Colors.white,
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 20.0, horizontal: 60.0),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(30.0)),
-                                ),
-                              ),
+                              )
                             ],
                           ),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(40.0))),
                         ),
+                        SizedBox(
+                          height: 25.0,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            ElevatedButton(
+                              child: Text(
+                                'Yes'.toUpperCase(),
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.height * 0.02,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.green,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 17.0, horizontal: 30.0),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0)),
+                              ),
+                              onPressed: uploadFile,
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                setState(() => uploadScreen = false);
+                              },
+                              child: Text(
+                                'no'.toUpperCase(),
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.height *
+                                            0.02,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.red,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 17.0, horizontal: 30.0),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.0),
                       ),
-                    ],
+                    ),
                   )
                 : successFul
                     ? Stack(
@@ -339,19 +332,21 @@ class _DisplayFileState extends State<DisplayFile> {
                                     ),
                                   ]),
                               decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(40.0))),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(40.0),
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       )
                     : Stack(
                         children: [
-                          Center(
-                            child: Container(
-                              height: MediaQuery.of(context).size.height * 0.5,
-                              width: MediaQuery.of(context).size.width * 0.8,
+                          Container(
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            child: Center(
                               child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -381,11 +376,11 @@ class _DisplayFileState extends State<DisplayFile> {
                                       ),
                                     ),
                                   ]),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(40.0))),
                             ),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20.0))),
                           ),
                         ],
                       ),
