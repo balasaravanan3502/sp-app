@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,9 +7,13 @@ import 'package:sp_app/Modules/Shared/Screens/SHCreateFormScreen.dart';
 import 'package:sp_app/Modules/Shared/Screens/SHHomeScreen.dart';
 import 'package:sp_app/Modules/Students/Screens/STSubmitFromScreen.dart';
 
-import 'Provider/Auth.dart';
+import 'Provider/Data.dart';
 
-void main() async {
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+
   runApp(MyApp());
 }
 
@@ -19,7 +24,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(
-          value: Auth(),
+          value: Data(),
         ),
         // ChangeNotifierProvider.value(
         //   value: Data(),

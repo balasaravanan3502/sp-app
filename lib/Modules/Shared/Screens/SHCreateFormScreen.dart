@@ -82,18 +82,18 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
           label: const Text(
             'Create Form',
             style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
             ),
           ),
           icon: const Icon(
             Icons.add,
-            color: Colors.black,
+            color: Colors.white,
           ),
-          backgroundColor: Color(0xffE49D70),
+          backgroundColor: Color(0xff6E7FFC),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        backgroundColor: Color(0xffF5F6FD),
+        backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(
             MediaQuery.of(context).size.height * .11,
@@ -103,7 +103,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
               top: MediaQuery.of(context).size.height * .02,
             ),
             child: AppBar(
-              backgroundColor: Color(0xffF5F6FD),
+              backgroundColor: Colors.white,
               elevation: 0,
               centerTitle: true,
               title: Text(
@@ -234,7 +234,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                     itemCount: _count,
                     itemBuilder: (context, index) {
                       return Card(
-                        elevation: 5,
+                        elevation: 2,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),

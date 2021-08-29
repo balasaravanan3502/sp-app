@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+const kPrimary = Color(0xff2C364E);
 const TextFieldDecoration = InputDecoration(
   border: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(20.0)),

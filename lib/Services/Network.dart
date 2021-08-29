@@ -2,14 +2,17 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class NetworkHelper {
-  final String url = 'https://brilliantrev.com/digitaldairy/operator_api/';
+  final String url = 'https://sp-app-server.herokuapp.com/';
   var client = http.Client();
 
   Future postMethod(String api, body) async {
-    var response =
-        await client.post(Uri.parse('$url$api'), body: jsonEncode(body));
-
+    var response = await client.post(Uri.parse('$url$api'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: json.encode(body));
     var data = response.body;
+
     return jsonDecode(data);
   }
 
