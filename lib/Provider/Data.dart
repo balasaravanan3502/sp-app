@@ -56,4 +56,12 @@ class Data extends ChangeNotifier {
     print(response);
     return response;
   }
+
+  Future<dynamic> updateMaterialStatus(body) async {
+    print(body);
+    NetworkHelper networkHelper = NetworkHelper();
+    var response = await networkHelper.postMethod('material/edit-status', body);
+    print(response);
+    return response;
+  }
 }

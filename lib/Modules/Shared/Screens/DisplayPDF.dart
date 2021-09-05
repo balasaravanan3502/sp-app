@@ -93,352 +93,374 @@ class _DisplayPDFState extends State<DisplayPDF>
                 )),
           ),
           fileLoaded
-              ? Container(
-                  height: 80,
-                  width: MediaQuery.of(context).size.width,
-                  child: (isSearch == true && isShare == true)
-                      ? SlideInLeft(
-                          duration: Duration(milliseconds: 250),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Align(
-                                alignment: Alignment.centerLeft,
-                                child: Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.3,
-                                  //color: Colors.indigo,
-                                  child: Text(
-                                    widget.name.toUpperCase(),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontSize:
-                                            MediaQuery.of(context).size.width *
+              ? Material(
+                  elevation: 10,
+                  child: Container(
+                    height: 80,
+                    width: MediaQuery.of(context).size.width,
+                    child: (isSearch == true && isShare == true)
+                        ? SlideInLeft(
+                            duration: Duration(milliseconds: 250),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.3,
+                                      //color: Colors.indigo,
+                                      child: Text(
+                                        widget.name,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
                                                 0.04,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 30.0),
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  child: (pageCount != 1)
-                                      ? Text(
-                                          '$start/$pageCount',
-                                          style: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black),
-                                        )
-                                      : Text(
-                                          '1/1',
-                                          style: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.035,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black),
-                                        ),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.lightBlue,
-                                    elevation: 5,
-                                    padding: EdgeInsets.all(15.0),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20.0))),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 30.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    isSearch = false;
-                                    setState(() {});
-                                  },
-                                  child: Icon(Icons.search),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.lightBlue,
-                                    elevation: 5,
-                                    padding: EdgeInsets.all(10.0),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20.0))),
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.only(left: 30.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    isShare = false;
-                                    setState(() {});
-                                  },
-                                  child: Icon(Icons.link_sharp),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.lightBlue,
-                                    elevation: 5,
-                                    padding: EdgeInsets.all(10.0),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(20.0))),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : (isSearch == false && isShare == true)
-                          ? SlideInRight(
-                              duration: Duration(milliseconds: 250),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.navigate_before,
-                                      color: Colors.white,
-                                    ),
-                                    onPressed: () async {
-                                      _searchResult.previousInstance();
-                                      if (searchIndex == 1) {
-                                        return setState(() {
-                                          searchIndex = searchCount;
-                                        });
-                                      } else {
-                                        searchIndex--;
-                                        setState(() {});
-                                      }
-                                    },
-                                  ),
-                                  Container(
-                                    height: 40,
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.2,
-                                    child: TextField(
-                                      showCursor: false,
-                                      controller: _textEditingController,
-                                      decoration: InputDecoration(
-                                          hintText: 'search',
-                                          hintStyle: TextStyle(
-                                            fontStyle: FontStyle.italic,
-                                          )),
-                                      style: TextStyle(
-                                        color: Colors.indigo,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black),
                                       ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 20.0),
-                                    child: ElevatedButton(
-                                      onPressed: () async {
-                                        _searchResult =
-                                            (await _controller.searchText(
-                                                _textEditingController.text));
-                                        setState(() => isSearch = false);
-                                        searchIndex =
-                                            _searchResult.currentInstanceIndex;
-                                        searchCount =
-                                            _searchResult.totalInstanceCount;
-                                        if (searchCount > 0) {
-                                          search = true;
-                                        }
-                                      },
-                                      child: Icon(Icons.search),
-                                      style: ElevatedButton.styleFrom(
-                                        primary: Colors.lightBlue,
-                                        elevation: 5,
-                                        padding: EdgeInsets.all(10.0),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20.0))),
-                                      ),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(
-                                      Icons.navigate_next,
-                                      color: Colors.white,
-                                    ),
-                                    onPressed: () async {
-                                      _searchResult.nextInstance();
-                                      if (searchIndex == 1) {
-                                        return setState(() {
-                                          searchIndex = 1;
-                                        });
-                                      } else {
-                                        searchIndex++;
-                                        setState(() {});
-                                      }
-                                    },
-                                  ),
-                                  search
-                                      ? Container(
-                                          padding: EdgeInsets.only(top: 12.0),
-                                          height: 40,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.1,
-                                          child: Text(
-                                            '$searchIndex / $searchCount',
-                                            style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.035,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black),
-                                          ),
-                                        )
-                                      : SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.1,
-                                        ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 12.0),
-                                    child: ElevatedButton(
-                                      onPressed: () async {
-                                        _searchResult =
-                                            (await _controller.searchText(
-                                                'qwertyuiopasdfghjklzxcvbnm'));
-                                        setState(() {
-                                          search = false;
-                                          isSearch = true;
-                                        });
-                                        searchIndex = searchCount = 0;
-                                      },
-                                      child: Icon(Icons.cancel_sharp),
-                                      style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.all(10.0),
-                                        primary: Colors.lightBlue,
-                                        elevation: 5,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20.0))),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : SlideInRight(
-                              duration: Duration(milliseconds: 250),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 20.0),
-                                    child: ElevatedButton(
-                                      onPressed: () async {},
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Icon(Icons.cloud_download_sharp),
-                                          SizedBox(
-                                            width: 7,
-                                          ),
-                                          Text(
-                                            'Download'.toUpperCase(),
-                                            style: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.02,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      child: (pageCount != 1)
+                                          ? Text(
+                                              '$start/$pageCount',
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.035,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black),
+                                            )
+                                          : Text(
+                                              '1/1',
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.035,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black),
                                             ),
-                                          )
-                                        ],
-                                      ),
                                       style: ElevatedButton.styleFrom(
-                                        primary: Colors.lightBlue,
-                                        elevation: 5,
+                                        primary: Colors.transparent,
+                                        elevation: 0,
                                         padding: EdgeInsets.all(15.0),
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
                                                 Radius.circular(20.0))),
                                       ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 20.0),
-                                    child: ElevatedButton(
-                                      onPressed: () async {
-                                        await Share.share(widget.url);
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        isShare = false;
+                                        setState(() {});
                                       },
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Icon(Icons.share_sharp),
-                                          SizedBox(
-                                            width: 7,
-                                          ),
-                                          Text(
-                                            'share'.toUpperCase(),
-                                            style: TextStyle(
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.02,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
+                                      child: Icon(
+                                        Icons.link_sharp,
+                                        color: Colors.black,
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        primary: Colors.transparent,
+                                        elevation: 0,
+                                        padding: EdgeInsets.all(10.0),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20.0))),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        isSearch = false;
+                                        setState(() {});
+                                      },
+                                      child: Icon(
+                                        Icons.search,
+                                        color: Colors.black,
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        primary: Colors.transparent,
+                                        elevation: 0,
+                                        padding: EdgeInsets.all(10.0),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(20.0))),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          )
+                        : (isSearch == false && isShare == true)
+                            ? SlideInRight(
+                                duration: Duration(milliseconds: 250),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.navigate_before,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () async {
+                                        _searchResult.previousInstance();
+                                        if (searchIndex == 1) {
+                                          return setState(() {
+                                            searchIndex = searchCount;
+                                          });
+                                        } else {
+                                          searchIndex--;
+                                          setState(() {});
+                                        }
+                                      },
+                                    ),
+                                    Container(
+                                      height: 40,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.2,
+                                      child: TextField(
+                                        showCursor: false,
+                                        controller: _textEditingController,
+                                        decoration: InputDecoration(
+                                            hintText: 'search',
+                                            hintStyle: TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                            )),
+                                        style: TextStyle(
+                                          color: Colors.indigo,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 20.0),
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          _searchResult =
+                                              (await _controller.searchText(
+                                                  _textEditingController.text));
+                                          setState(() => isSearch = false);
+                                          searchIndex = _searchResult
+                                              .currentInstanceIndex;
+                                          searchCount =
+                                              _searchResult.totalInstanceCount;
+                                          if (searchCount > 0) {
+                                            search = true;
+                                          }
+                                        },
+                                        child: Icon(Icons.search),
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.lightBlue,
+                                          elevation: 5,
+                                          padding: EdgeInsets.all(10.0),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(20.0))),
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.navigate_next,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () async {
+                                        _searchResult.nextInstance();
+                                        if (searchIndex == 1) {
+                                          return setState(() {
+                                            searchIndex = 1;
+                                          });
+                                        } else {
+                                          searchIndex++;
+                                          setState(() {});
+                                        }
+                                      },
+                                    ),
+                                    search
+                                        ? Container(
+                                            padding: EdgeInsets.only(top: 12.0),
+                                            height: 40,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.1,
+                                            child: Text(
+                                              '$searchIndex / $searchCount',
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.035,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black),
                                             ),
                                           )
-                                        ],
-                                      ),
-                                      style: ElevatedButton.styleFrom(
-                                        primary: Colors.lightBlue,
-                                        elevation: 5,
-                                        padding: EdgeInsets.only(
-                                            top: 15.0,
-                                            bottom: 15.0,
-                                            left: 17.0,
-                                            right: 20.0),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20.0))),
+                                        : SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.1,
+                                          ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 12.0),
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          _searchResult =
+                                              (await _controller.searchText(
+                                                  'qwertyuiopasdfghjklzxcvbnm'));
+                                          setState(() {
+                                            search = false;
+                                            isSearch = true;
+                                          });
+                                          searchIndex = searchCount = 0;
+                                        },
+                                        child: Icon(Icons.cancel_sharp),
+                                        style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.all(10.0),
+                                          primary: Colors.lightBlue,
+                                          elevation: 5,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(20.0))),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 12.0),
-                                    child: ElevatedButton(
-                                      onPressed: () async {
-                                        setState(() => isShare = true);
-                                      },
-                                      child: Icon(Icons.cancel_sharp),
-                                      style: ElevatedButton.styleFrom(
-                                        padding: EdgeInsets.all(10.0),
-                                        primary: Colors.lightBlue,
-                                        elevation: 5,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20.0))),
+                                  ],
+                                ),
+                              )
+                            : SlideInRight(
+                                duration: Duration(milliseconds: 250),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 20.0),
+                                      child: ElevatedButton(
+                                        onPressed: () async {},
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Icon(Icons.cloud_download_sharp),
+                                            SizedBox(
+                                              width: 7,
+                                            ),
+                                            Text(
+                                              'Download'.toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.02,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.lightBlue,
+                                          elevation: 5,
+                                          padding: EdgeInsets.all(15.0),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(20.0))),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 20.0),
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          await Share.share(widget.url);
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Icon(Icons.share_sharp),
+                                            SizedBox(
+                                              width: 7,
+                                            ),
+                                            Text(
+                                              'share'.toUpperCase(),
+                                              style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.02,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.lightBlue,
+                                          elevation: 5,
+                                          padding: EdgeInsets.only(
+                                              top: 15.0,
+                                              bottom: 15.0,
+                                              left: 17.0,
+                                              right: 20.0),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(20.0))),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 12.0),
+                                      child: ElevatedButton(
+                                        onPressed: () async {
+                                          setState(() => isShare = true);
+                                        },
+                                        child: Icon(Icons.cancel_sharp),
+                                        style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.all(10.0),
+                                          primary: Colors.lightBlue,
+                                          elevation: 5,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(20.0))),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                  decoration: BoxDecoration(
-                    color: Colors.lightBlue,
+                    decoration: BoxDecoration(
+                      color: Colors.white60,
+                    ),
                   ),
                 )
               : Container(
@@ -447,7 +469,7 @@ class _DisplayPDFState extends State<DisplayPDF>
                   color: Colors.white,
                   child: Center(
                     child: Container(
-                      color: Colors.amber,
+                      color: Color(0xff6E7FFC),
                       height: 130,
                       width: 130,
                       padding: EdgeInsets.all(20.0),
@@ -460,7 +482,7 @@ class _DisplayPDFState extends State<DisplayPDF>
                               fontSize:
                                   MediaQuery.of(context).size.height * 0.025,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                              color: Colors.white,
                             ),
                           ),
                           Container(
@@ -468,7 +490,7 @@ class _DisplayPDFState extends State<DisplayPDF>
                             width: 40,
                             child: LoadingIndicator(
                                 indicatorType: Indicator.ballPulseSync,
-                                colors: const [Colors.black],
+                                colors: const [Colors.white],
                                 strokeWidth: 0,
                                 backgroundColor: Colors.transparent,
                                 pathBackgroundColor: Colors.black),

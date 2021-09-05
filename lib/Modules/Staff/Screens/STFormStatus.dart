@@ -90,6 +90,50 @@ class _STFormStatusState extends State<STFormStatus> {
                   ),
                 ),
               ),
+              if (isCompleted)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        primary: Color(0xff6E7FFC),
+                        // shape: StadiumBorder(),
+                      ),
+                      onPressed: () {
+                        // _submitted();
+                        // setState(() {
+                        //   isLoading = false;
+                        // });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(13.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.attach_email),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              'Send mail',
+                              style: TextStyle(
+                                fontSize: 17,
+                                color: Colors.white,
+                                letterSpacing: 0.7,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               Container(
                 child: Flexible(
                   child: ListView.builder(

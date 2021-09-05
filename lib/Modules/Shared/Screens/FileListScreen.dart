@@ -11,6 +11,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'dart:async';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sp_app/Modules/Shared/Screens/DisplayPDF.dart';
 import 'package:sp_app/Provider/Data.dart';
 import 'DisplayPDF.dart';
@@ -30,11 +31,12 @@ class _DisplayFileState extends State<DisplayFile> {
   bool uploadScreen = false;
   bool uploadLoading = false;
   bool successFul = false;
+  bool isStaff = true;
   String ref = '';
   String name = '';
   String fileNameR = '';
   bool isFileLoaded = false;
-  bool isFLoata = false;
+  bool isReviewed = false;
 
   @override
   void initState() {
@@ -43,9 +45,21 @@ class _DisplayFileState extends State<DisplayFile> {
 
   Future<String> futureProvider() async {
     final provider = Provider.of<Data>(context, listen: false);
+    final SharedPreferences sharedpref = await SharedPreferences.getInstance();
+    // isStaff = sharedpref.getString('role') == 'staff';
     materials = await provider.getMaterialBySuject(
-        {"role": "staff", "subjectName": widget.subjectName});
+        {"role": 'staff', "subjectName": widget.subjectName});
+    print(materials);
+
     return 'completed';
+  }
+
+  Future<void> updateStatus(id, status) async {
+    final provider = Provider.of<Data>(context, listen: false);
+    print({"id": id, "status": status, "subjectName": widget.subjectName});
+    var update = await provider.updateMaterialStatus(
+        {"id": id, "status": status, "subjectName": widget.subjectName});
+    futureProvider();
   }
 
   Widget futureBuild() {
@@ -62,81 +76,409 @@ class _DisplayFileState extends State<DisplayFile> {
                   ),
                 ),
               );
-            else
-              return GridView.builder(
-                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: MediaQuery.of(context).size.width * 0.8,
-                  childAspectRatio: 3 / 3,
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 20,
-                ),
-                itemCount: materials.length,
-                itemBuilder: (BuildContext context, int index) {
-                  final fileDetails = materials[index];
-                  return AnimationConfiguration.staggeredList(
-                    position: index,
-                    duration: const Duration(milliseconds: 500),
-                    child: SlideAnimation(
-                      verticalOffset: 50.0,
-                      child: FadeInAnimation(
-                        child: Container(
-                          margin: EdgeInsets.all(10.0),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              elevation: 20,
-                              primary: Colors.white,
-                              side: BorderSide(
-                                width: 1.5,
-                                color: Colors.black,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0)),
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DisplayPDF(
-                                      url: fileDetails['materialLink'],
-                                      name: fileDetails['materialName']),
-                                ),
-                              );
-                            },
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            else {
+              return AnimationLimiter(
+                child: Column(
+                  children: [
+                    if (isStaff)
+                      Container(
+                        height: 60,
+                        margin: EdgeInsets.only(bottom: 10),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Center(
+                            child: ToggleButtons(
+                              borderRadius: BorderRadius.circular(10),
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
+                                Container(
+                                  width: MediaQuery.of(context).size.width * .4,
+                                  child: Center(
                                     child: Text(
-                                      fileDetails['materialName'],
+                                      "Published",
                                       style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                      maxLines: 1,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                 ),
                                 Container(
-                                  padding: EdgeInsets.only(left: 60.0),
-                                  child: Text(
-                                    'Uploaded by: ARJUN',
-                                    style: TextStyle(
-                                        fontSize: 15,
+                                  width: MediaQuery.of(context).size.width * .4,
+                                  child: Center(
+                                    child: Text(
+                                      "To be Reviewed",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.black),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
+                              onPressed: (int index) {
+                                setState(() {
+                                  if (index == 0) {
+                                    isReviewed = false;
+                                  } else {
+                                    isReviewed = true;
+                                  }
+                                });
+                              },
+                              color: Color(0xff6E7FFC),
+                              selectedColor: Colors.white,
+                              fillColor: Color(0xff6E7FFC),
+                              isSelected: [!isReviewed, isReviewed],
+                              borderColor: Colors.transparent,
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    if (isReviewed)
+                      Flexible(
+                        child: ListView.builder(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                          ),
+                          itemCount: materials.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final fileDetails = materials[index];
+                            print(fileDetails['accepted']);
+                            if ((fileDetails['accepted'] == true && isReviewed))
+                              return Material();
+
+                            return AnimationConfiguration.staggeredList(
+                              position: index,
+                              duration: const Duration(milliseconds: 500),
+                              child: SlideAnimation(
+                                verticalOffset: 50.0,
+                                child: FadeInAnimation(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => DisplayPDF(
+                                                url:
+                                                    fileDetails['materialLink'],
+                                                name: fileDetails[
+                                                    'materialName']),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                        ),
+                                        child: Card(
+                                          elevation: 5,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 15.0, horizontal: 8),
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .3,
+                                                  child: Image.network(
+                                                    'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
+                                                  ),
+                                                ),
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .55,
+                                                      child: Text(
+                                                        fileDetails[
+                                                            'materialName'],
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.black),
+                                                        maxLines: 2,
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 6,
+                                                    ),
+                                                    Container(
+                                                      child: Text(
+                                                        'Uploaded by : ${fileDetails['uploadedBy']}',
+                                                        style: TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color:
+                                                                Colors.black),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        InkWell(
+                                                          onTap: () {
+                                                            print("accpet");
+                                                            showDialog<String>(
+                                                              context: context,
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  AlertDialog(
+                                                                title: const Text(
+                                                                    'Are you sure to publish the material?'),
+                                                                actions: <
+                                                                    Widget>[
+                                                                  TextButton(
+                                                                    onPressed: () =>
+                                                                        Navigator.pop(
+                                                                            context),
+                                                                    child: const Text(
+                                                                        'Cancel'),
+                                                                  ),
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      updateStatus(
+                                                                          fileDetails[
+                                                                              '_id'],
+                                                                          true);
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                            'OK'),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                .23,
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  Colors.green,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                            child: Center(
+                                                              child: Text(
+                                                                'Accept',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            print("accpet");
+                                                            showDialog<String>(
+                                                              context: context,
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  AlertDialog(
+                                                                title: const Text(
+                                                                    'Are you sure to publish the material?'),
+                                                                actions: <
+                                                                    Widget>[
+                                                                  TextButton(
+                                                                    onPressed: () =>
+                                                                        Navigator.pop(
+                                                                            context),
+                                                                    child: const Text(
+                                                                        'Cancel'),
+                                                                  ),
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      updateStatus(
+                                                                          fileDetails[
+                                                                              '_id'],
+                                                                          false);
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                            'OK'),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                .23,
+                                                            height: 40,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors.red,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                            ),
+                                                            child: Center(
+                                                              child: Text(
+                                                                'Reject',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 16,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    if (!isReviewed)
+                      Flexible(
+                        child: GridView.builder(
+                          gridDelegate:
+                              SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent:
+                                MediaQuery.of(context).size.width * 0.8,
+                            childAspectRatio: 3 / 3,
+                            crossAxisSpacing: 15,
+                            mainAxisSpacing: 20,
+                          ),
+                          itemCount: materials.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final fileDetails = materials[index];
+                            if ((fileDetails['accepted'] == false &&
+                                !isReviewed)) return Material();
+                            return AnimationConfiguration.staggeredList(
+                              position: index,
+                              duration: const Duration(milliseconds: 500),
+                              child: SlideAnimation(
+                                verticalOffset: 50.0,
+                                child: FadeInAnimation(
+                                  child: Container(
+                                    margin: EdgeInsets.all(10.0),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        elevation: 20,
+                                        primary: Colors.white,
+                                        side: BorderSide(
+                                          width: 1.5,
+                                          color: Colors.black,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20.0)),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => DisplayPDF(
+                                                url:
+                                                    fileDetails['materialLink'],
+                                                name: fileDetails[
+                                                    'materialName']),
+                                          ),
+                                        );
+                                      },
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Container(
+                                              child: Text(
+                                                fileDetails['materialName'],
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black),
+                                                maxLines: 1,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            padding:
+                                                EdgeInsets.only(left: 60.0),
+                                            child: Text(
+                                              'Uploaded by: ARJUN',
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                  ],
+                ),
               );
+            }
           }
 
           return Center(
