@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sp_app/Modules/Shared/Widgets/CustomSnackBar.dart';
+import 'package:sp_app/Provider/Data.dart';
 
 import '../../../constant.dart';
+import 'SHHomeScreen.dart';
 
 class SHCreateFormScreen extends StatefulWidget {
-  const SHCreateFormScreen({Key? key}) : super(key: key);
+  final type;
+  SHCreateFormScreen(this.type);
 
   @override
   _SHCreateFormScreenState createState() => _SHCreateFormScreenState();
@@ -17,8 +23,10 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
   var dateAPI;
   var date;
   var _result = '';
+  List<String> classes = [];
   final TextEditingController _lastDate = TextEditingController();
-  var className = 'IIICSEA';
+  final TextEditingController _title = TextEditingController();
+  var className = null;
 
   List<bool> isExpanded = [true];
   List<int> _radioSelected = [1];
@@ -43,15 +51,40 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
     }
   }
 
-  void _submitted() {
-    var data = {
-      'lastDate': _lastDate.text,
-      'question': _values,
-      'creatorId': '12',
-      'creatorName': 'ads',
-      'class': className
-    };
-    print(data);
+  void _submitted() async {
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (_lastDate.text != '') {
+      final provider = Provider.of<Data>(context, listen: false);
+      print(_values.runtimeType);
+      var result = await provider.addWork({
+        'title': _title.text,
+        'lastDate': _lastDate.text,
+        'questions': _values,
+        'creatorId': '12',
+        'creatorName': 'ads',
+        'class': className,
+        "type": widget.type,
+      });
+
+      print(result);
+
+      if (result['code'] == '200') {
+        // final provider = Provider.of<Data>(context, listen: false);
+        // await provider.fetchData();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SHHomeScreen(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          customSnackBar(
+            content: result['message'].toString(),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -61,6 +94,15 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
 
     _lastDate.text = (DateFormat('dd-MM-yyyy')
         .format(DateTime(dateNow.year, dateNow.month, dateNow.day + 1)));
+    fetchClasses();
+  }
+
+  Future<void> fetchClasses() async {
+    final SharedPreferences sharedpref = await SharedPreferences.getInstance();
+    setState(() {
+      classes = sharedpref.getStringList('classes')!;
+    });
+    print(classes);
   }
 
   @override
@@ -125,6 +167,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                       _radioType.add('Text');
                       _radioSelected.add(1);
                       required.add(true);
+                      className = null;
                     });
                   },
                 ),
@@ -154,6 +197,18 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
             child: Column(
               children: [
                 Padding(
+                  padding: const EdgeInsets.only(
+                      left: 13.0, right: 13.0, bottom: 30.0),
+                  child: TextFormField(
+                    controller: _title,
+                    decoration: TextFieldDecoration.copyWith(
+                      hintText: 'Enter Title',
+                    ),
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ),
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   child: Row(
                     children: [
@@ -172,7 +227,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                             ),
                             suffixIcon: Icon(
                               Icons.calendar_today,
-                              color: Color(0xff0A662F),
+                              color: kPrimary,
                               size: 20,
                             ),
                             labelText: 'Last Date',
@@ -188,7 +243,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                             borderRadius: BorderRadius.circular(10.0),
                             // color: Colors.white,
                             border: Border.all(
-                                color: Color(0xff2598FA),
+                                color: kPrimary,
                                 style: BorderStyle.solid,
                                 width: 0.80),
                           ),
@@ -196,7 +251,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton(
                               value: className,
-                              items: ['IIICSEA'].map((String item) {
+                              items: classes.map((String item) {
                                 return DropdownMenuItem<String>(
                                   child: Text(item),
                                   value: item,
@@ -207,7 +262,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                   className = value.toString();
                                 });
                               },
-                              hint: Text("Class"),
+                              hint: Text("Pick a Class"),
                               disabledHint: Text("Disabled"),
                               elevation: 8,
                               style:
@@ -328,7 +383,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                                           child: Text(
                                                             'Type',
                                                             style: TextStyle(
-                                                              fontSize: 20,
+                                                              fontSize: 18,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -343,43 +398,38 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                                                       5.0),
                                                           child: Row(
                                                             children: [
-                                                              Transform.scale(
-                                                                scale: 1.2,
-                                                                child: Radio(
-                                                                  value: 1,
-                                                                  groupValue:
-                                                                      _radioSelected[
-                                                                          index],
-                                                                  activeColor:
-                                                                      Color(
-                                                                          0xff0A662F),
-                                                                  onChanged:
-                                                                      (value) {
-                                                                    setState(
-                                                                        () {
-                                                                      _radioSelected[
-                                                                              index] =
-                                                                          int.parse(
-                                                                              value.toString());
-                                                                      _radioType[
-                                                                              index] =
-                                                                          'Text';
-                                                                      _onUpdate(
-                                                                          index,
-                                                                          '',
-                                                                          _radioType[
-                                                                              index],
-                                                                          required[
-                                                                              index]);
-                                                                    });
-                                                                  },
-                                                                ),
+                                                              Radio(
+                                                                value: 1,
+                                                                groupValue:
+                                                                    _radioSelected[
+                                                                        index],
+                                                                activeColor: Color(
+                                                                    0xff0A662F),
+                                                                onChanged:
+                                                                    (value) {
+                                                                  setState(() {
+                                                                    _radioSelected[
+                                                                            index] =
+                                                                        int.parse(
+                                                                            value.toString());
+                                                                    _radioType[
+                                                                            index] =
+                                                                        'Text';
+                                                                    _onUpdate(
+                                                                        index,
+                                                                        '',
+                                                                        _radioType[
+                                                                            index],
+                                                                        required[
+                                                                            index]);
+                                                                  });
+                                                                },
                                                               ),
                                                               Text(
                                                                 'Text',
                                                                 style:
                                                                     TextStyle(
-                                                                  fontSize: 18,
+                                                                  fontSize: 16,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -396,43 +446,38 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                                                       5.0),
                                                           child: Row(
                                                             children: [
-                                                              Transform.scale(
-                                                                scale: 1.2,
-                                                                child: Radio(
-                                                                  value: 2,
-                                                                  groupValue:
-                                                                      _radioSelected[
-                                                                          index],
-                                                                  activeColor:
-                                                                      Color(
-                                                                          0xff0A662F),
-                                                                  onChanged:
-                                                                      (value) {
-                                                                    setState(
-                                                                        () {
-                                                                      _radioSelected[
-                                                                              index] =
-                                                                          int.parse(
-                                                                              value.toString());
-                                                                      _radioType[
-                                                                              index] =
-                                                                          'Options';
-                                                                      _onUpdate(
-                                                                          index,
-                                                                          '',
-                                                                          _radioType[
-                                                                              index],
-                                                                          required[
-                                                                              index]);
-                                                                    });
-                                                                  },
-                                                                ),
+                                                              Radio(
+                                                                value: 2,
+                                                                groupValue:
+                                                                    _radioSelected[
+                                                                        index],
+                                                                activeColor: Color(
+                                                                    0xff0A662F),
+                                                                onChanged:
+                                                                    (value) {
+                                                                  setState(() {
+                                                                    _radioSelected[
+                                                                            index] =
+                                                                        int.parse(
+                                                                            value.toString());
+                                                                    _radioType[
+                                                                            index] =
+                                                                        'Options';
+                                                                    _onUpdate(
+                                                                        index,
+                                                                        '',
+                                                                        _radioType[
+                                                                            index],
+                                                                        required[
+                                                                            index]);
+                                                                  });
+                                                                },
                                                               ),
                                                               Text(
                                                                 'Options',
                                                                 style:
                                                                     TextStyle(
-                                                                  fontSize: 18,
+                                                                  fontSize: 16,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w500,
@@ -445,7 +490,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                                     ),
                                                   ),
                                                   SizedBox(
-                                                    width: 20,
+                                                    width: 5,
                                                   ),
                                                   Column(
                                                     crossAxisAlignment:
@@ -486,7 +531,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                                                 'Remove',
                                                                 style:
                                                                     TextStyle(
-                                                                  fontSize: 18,
+                                                                  fontSize: 16,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
@@ -494,7 +539,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                                               ),
                                                               Icon(
                                                                 Icons.delete,
-                                                                size: 27,
+                                                                size: 25,
                                                                 color: Colors
                                                                     .redAccent,
                                                               ),
@@ -516,17 +561,17 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w700,
-                                                              fontSize: 17,
+                                                              fontSize: 16,
                                                             ),
                                                           ),
                                                           SizedBox(
                                                             width: 20,
                                                           ),
                                                           FlutterSwitch(
-                                                            width: 65.0,
-                                                            height: 35.0,
-                                                            valueFontSize: 15.0,
-                                                            toggleSize: 15.0,
+                                                            width: 45.0,
+                                                            height: 25.0,
+                                                            valueFontSize: 9.0,
+                                                            toggleSize: 10.0,
                                                             value:
                                                                 required[index],
                                                             activeColor: Color(

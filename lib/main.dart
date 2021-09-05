@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         // ),
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Straw Boss',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           primarySwatch: Colors.blue,
@@ -68,9 +68,9 @@ class _LandingScreenState extends State<LandingScreen> {
         future: landingPageDecider(),
         builder: (context, AsyncSnapshot<String> snapshot) {
           if (snapshot.data == 'home') return SHHomeScreen();
-          // if (snapshot.data == 'signIn') return FormScreen();
+          if (snapshot.data == 'signIn') return LoginScreen();
 
-          return LoginScreen();
+          return SHHomeScreen();
         });
   }
 }

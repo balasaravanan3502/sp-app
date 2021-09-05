@@ -35,11 +35,11 @@ const kTextFieldDecoration = InputDecoration(
   ),
   contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
   enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Color(0xff2598FA), width: 1.0),
+    borderSide: BorderSide(color: kPrimary, width: 1.0),
     borderRadius: BorderRadius.all(Radius.circular(10.0)),
   ),
   focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Color(0xff2598FA), width: 1.5),
+    borderSide: BorderSide(color: kPrimary, width: 1.5),
     borderRadius: BorderRadius.all(Radius.circular(10.0)),
   ),
 );

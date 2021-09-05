@@ -7,6 +7,7 @@
 import 'package:file_picker/src/file_picker_web.dart';
 import 'package:firebase_core_web/firebase_core_web.dart';
 import 'package:firebase_storage_web/firebase_storage_web.dart';
+import 'package:native_pdf_renderer/src/web/native_pdf_renderer_plugin.dart';
 import 'package:shared_preferences_web/shared_preferences_web.dart';
 import 'package:syncfusion_flutter_pdfviewer_web/pdfviewer_web.dart';
 
@@ -17,6 +18,7 @@ void registerPlugins(Registrar registrar) {
   FilePickerWeb.registerWith(registrar);
   FirebaseCoreWeb.registerWith(registrar);
   FirebaseStorageWeb.registerWith(registrar);
+  NativePdfRendererPlugin.registerWith(registrar);
   SharedPreferencesPlugin.registerWith(registrar);
   SyncfusionFlutterPdfViewerPlugin.registerWith(registrar);
   registrar.registerMessageHandler();

@@ -5,12 +5,14 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import "package:sp_app/Helpers/Capitalize.dart";
 import 'package:sp_app/Modules/Shared/Screens/SubjectListScreen.dart';
-import 'package:sp_app/Modules/Shared/Widgets/BottomNavigationBar.dart';
+import 'package:sp_app/Modules/Staff/Screens/STFormStatus.dart';
 import 'package:sp_app/Modules/Staff/Widgets/Neumorphic_Chart/pie_chart_view.dart';
 
 import '../../../constant.dart';
+import 'SHCreateFormScreen.dart';
 
 class SHHomeScreen extends StatefulWidget {
   const SHHomeScreen({Key? key}) : super(key: key);
@@ -35,9 +37,28 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
     {
       "creatorName": "Shankar",
       "creatorId": "Shankar",
-      "question": [],
+      "questions": [
+        {
+          "id": 0,
+          "question": "What is your department?",
+        },
+        {
+          "id": 0,
+          "question": "What is your department?",
+        },
+        {
+          "id": 0,
+          "question": "What is your department?",
+        },
+      ],
       "title": "Nptel form",
       "unCompleted": [
+        {
+          "name": "bala",
+        },
+        {
+          "name": "bala",
+        },
         {
           "name": "bala",
         },
@@ -48,9 +69,19 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
       "completed": [
         {
           "name": "bala",
+          "response": [
+            {"id": 0, "answer": "ECE"},
+            {"id": 1, "answer": "ECE"},
+            {"id": 2, "answer": "ECE"},
+          ]
         },
         {
           "name": "bala",
+          "response": [
+            {"id": 0, "answer": "ECE"},
+            {"id": 1, "answer": "ECE"},
+            {"id": 2, "answer": "ECE"},
+          ]
         },
       ],
       "lastDate": DateTime.now(),
@@ -167,6 +198,7 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
         notchSmoothness: NotchSmoothness.verySmoothEdge,
       ),
       body: LoadingOverlay(
+        color: Colors.black,
         progressIndicator: Align(
           alignment: Alignment.bottomCenter,
           heightFactor: 12,
@@ -216,7 +248,15 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
                           color: Colors.lightBlue,
                           elevation: 10,
                           child: MaterialButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SHCreateFormScreen('form'),
+                                ),
+                              );
+                            },
                             child: Container(
                               width: MediaQuery.of(context).size.width * .2,
                               child: Text(
@@ -237,7 +277,15 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
                           color: Colors.lightBlue,
                           elevation: 10,
                           child: MaterialButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      SHCreateFormScreen('ack'),
+                                ),
+                              );
+                            },
                             child: Container(
                               width: MediaQuery.of(context).size.width * .23,
                               child: Text(
@@ -471,105 +519,129 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemBuilder: (context, index) {
-                      return AnimationConfiguration.staggeredList(
-                        position: index,
-                        duration: const Duration(milliseconds: 375),
-                        child: SlideAnimation(
-                          verticalOffset: 50.0,
-                          child: FadeInAnimation(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: new Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                                height: 150,
+                      return InkWell(
+                        onTap: () async {
+                          final SharedPreferences sharedpref =
+                              await SharedPreferences.getInstance();
+                          sharedpref.setString('role', 'staff');
+                          if (sharedpref.getString('role') == 'staff')
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => STFormStatus(data[index]),
+                              ),
+                            );
+                          if (sharedpref.getString('role') == 'student')
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => STFormStatus(data[index]),
+                              ),
+                            );
+                        },
+                        child: AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: const Duration(milliseconds: 375),
+                          child: SlideAnimation(
+                            verticalOffset: 50.0,
+                            child: FadeInAnimation(
+                              child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Neumorphic(
-                                  style: NeumorphicStyle(
-                                    shape: NeumorphicShape.flat,
-                                    // depth: 20, //customize depth here
-                                    color: Colors.white,
-                                    border: NeumorphicBorder(
-                                      color: Color.fromRGBO(193, 214, 233, 1),
-                                      width: 0.8,
-                                    ),
+                                child: new Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30.0),
                                   ),
-                                  child: new Container(
-                                    width: 40.0,
-                                    height: 100.0,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .5,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                              top: 8.0,
-                                              left: 24,
-                                            ),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  data[index]['title']!
-                                                      .toString()
-                                                      .capitalizeFirstofEach,
-                                                  style: TextStyle(
-                                                    fontSize: 26,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.brown,
+                                  height: 150,
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Neumorphic(
+                                    style: NeumorphicStyle(
+                                      shape: NeumorphicShape.flat,
+                                      // depth: 20, //customize depth here
+                                      color: Colors.white,
+                                      border: NeumorphicBorder(
+                                        color: Color.fromRGBO(193, 214, 233, 1),
+                                        width: 0.8,
+                                      ),
+                                    ),
+                                    child: new Container(
+                                      width: 40.0,
+                                      height: 100.0,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .5,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 8.0,
+                                                left: 24,
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    data[index]['title']!
+                                                        .toString()
+                                                        .capitalizeFirstofEach,
+                                                    style: TextStyle(
+                                                      fontSize: 26,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.brown,
+                                                    ),
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Text(
-                                                  data[index]['class']!
-                                                      .toString(),
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.grey,
+                                                  SizedBox(
+                                                    height: 10,
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Text(
-                                                  DateFormat.yMMMMd()
-                                                      .format(data[index]
-                                                              ['lastDate']
-                                                          as DateTime)
-                                                      .toString()
-                                                      .toString(),
-                                                  style: TextStyle(
-                                                    fontSize: 15,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.grey,
+                                                  Text(
+                                                    data[index]['class']!
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
+                                                  SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Text(
+                                                    DateFormat.yMMMMd()
+                                                        .format(data[index]
+                                                                ['lastDate']
+                                                            as DateTime)
+                                                        .toString()
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .05,
-                                        ),
-                                        PieChartView(data[index]),
-                                      ],
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .05,
+                                          ),
+                                          PieChartView(data[index]),
+                                        ],
+                                      ),
+                                      alignment: Alignment.center,
                                     ),
-                                    alignment: Alignment.center,
                                   ),
                                 ),
                               ),

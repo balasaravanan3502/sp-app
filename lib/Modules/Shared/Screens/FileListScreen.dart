@@ -121,7 +121,7 @@ class _DisplayFileState extends State<DisplayFile> {
                                 Container(
                                   padding: EdgeInsets.only(left: 60.0),
                                   child: Text(
-                                    'Created by: ARJUN',
+                                    'Uploaded by: ARJUN',
                                     style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
