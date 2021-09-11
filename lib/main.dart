@@ -54,8 +54,9 @@ class _LandingScreenState extends State<LandingScreen> {
     final SharedPreferences sharedpref = await SharedPreferences.getInstance();
     print(sharedpref.getString('id'));
     if (sharedpref.getString('id') != null) {
-      // final provider = Provider.of<Data>(context, listen: false);
-      // await provider.fetchData();
+      final provider = Provider.of<Data>(context, listen: false);
+
+      await provider.getWorks();
       return 'home';
     } else {
       return 'signIn';

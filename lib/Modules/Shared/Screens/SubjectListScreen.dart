@@ -21,10 +21,10 @@ class _SubjectListScreenState extends State<SubjectListScreen> {
         SliverPersistentHeader(
           pinned: true,
           delegate: FlexibleHeaderDelegate(
-            expandedHeight: 100,
+            expandedHeight: 70,
             background: MutableBackground(
-              expandedColor: Colors.lightBlue,
-              collapsedColor: Colors.indigo,
+              collapsedColor: Colors.lightBlueAccent,
+              expandedColor: Color(0xff6E7FFC),
             ),
           ),
         ),

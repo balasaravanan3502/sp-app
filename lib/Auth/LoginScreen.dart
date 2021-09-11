@@ -42,8 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
           .login({"email": _userId.text, "password": _password.text});
 
       if (result["code"] == '200') {
-        // final provider = Provider.of<Data>(context, listen: false);
-        // await provider.fetchData();
+        await provider.getWorks();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

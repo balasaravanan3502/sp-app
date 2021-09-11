@@ -22,11 +22,38 @@ class Data extends ChangeNotifier {
     sharedpref.setString('id', response['id']);
     sharedpref.setString('name', response['name']);
     sharedpref.setString('role', response['role']);
-    sharedpref.setStringList('classes', ['IIICSEA', 'IIICSEB']);
     if (response['role'] == 'staff') {
-      sharedpref.setStringList('classes', response['classes']);
+      List<String> classes = [];
+      for (int i = 0; i < response['class'].length; i++) {
+        classes.add(response['class'][i]);
+      }
+      sharedpref.setStringList('classes', classes);
+    } else {
+      sharedpref.setString('class', response['class']);
     }
     return response;
+  }
+
+  Future<void> getWorks() async {
+    final SharedPreferences sharedpref = await SharedPreferences.getInstance();
+    NetworkHelper networkHelper = NetworkHelper();
+    var response;
+    print(sharedpref.getString('role'));
+    if (sharedpref.getString('role') == 'staff') {
+      response = await networkHelper.postMethod('work/get-works',
+          {"role": "staff", "id": sharedpref.getString('id'), "class": ""});
+    } else {
+      response = await networkHelper.postMethod('work/get-works', {
+        "role": "student",
+        "id": sharedpref.getString('id'),
+        "class": sharedpref.getString('class')
+      });
+    }
+    print('asd');
+    print(sharedpref.getString('class'));
+    if (response['data'] != null) {
+      this.data = response['data'];
+    }
   }
 
   Future<List> getMaterialBySuject(body) async {
@@ -61,6 +88,14 @@ class Data extends ChangeNotifier {
     print(body);
     NetworkHelper networkHelper = NetworkHelper();
     var response = await networkHelper.postMethod('material/edit-status', body);
+    print(response);
+    return response;
+  }
+
+  Future<dynamic> completeWork(body) async {
+    print(body);
+    NetworkHelper networkHelper = NetworkHelper();
+    var response = await networkHelper.postMethod('work/complete-work', body);
     print(response);
     return response;
   }

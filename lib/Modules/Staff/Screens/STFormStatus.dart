@@ -1,8 +1,11 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/svg.dart';
 import "package:sp_app/Helpers/Capitalize.dart";
+import 'package:url_launcher/url_launcher.dart';
 
 class STFormStatus extends StatefulWidget {
   final data;
@@ -15,6 +18,43 @@ class _STFormStatusState extends State<STFormStatus> {
   bool isCompleted = true;
   List isExpandedComp = [];
   List isExpandedUnComp = [];
+
+  Future whatsapp(number) async {
+    var whatsapp = "+91$number";
+    var whatsapp_url =
+        "whatsapp://send?phone=" + whatsapp + "&text=Complete the Work";
+    var whatappURL_ios = "https://wa.me/$whatsapp?text=${Uri.parse("hello")}";
+    if (Platform.isIOS) {
+      if (await canLaunch(whatappURL_ios)) {
+        await launch(whatappURL_ios, forceSafariVC: false);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: new Text("Whatsapp is not installed")));
+      }
+    } else {
+      print(whatsapp_url);
+      if (await canLaunch(whatsapp_url)) {
+        await launch(whatsapp_url);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: new Text("Whatsapp is not installed")));
+      }
+    }
+  }
+
+  Future phoneCall(number) async {
+    var phone = "+91$number";
+    var phone_url = 'tel://$phone';
+    if (await canLaunch(phone_url)) {
+      await launch(phone_url);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: new Text("Error Occured"),
+        ),
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -304,7 +344,11 @@ class _STFormStatusState extends State<STFormStatus> {
                                                                   .width *
                                                               .038,
                                                     ),
-                                                    onPressed: () {},
+                                                    onPressed: () {
+                                                      phoneCall(widget.data[
+                                                              'unCompleted']
+                                                          [index]['phone']);
+                                                    },
                                                   ),
                                                   ElevatedButton(
                                                     style: ElevatedButton
@@ -328,7 +372,11 @@ class _STFormStatusState extends State<STFormStatus> {
                                                                   .width *
                                                               .038,
                                                     ),
-                                                    onPressed: () {},
+                                                    onPressed: () {
+                                                      whatsapp(widget.data[
+                                                              'unCompleted']
+                                                          [index]['phone']);
+                                                    },
                                                   ),
                                                 ],
                                               ),
