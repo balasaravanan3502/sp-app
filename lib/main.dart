@@ -50,28 +50,29 @@ class LandingScreen extends StatefulWidget {
 }
 
 class _LandingScreenState extends State<LandingScreen> {
-  Future<String> landingPageDecider() async {
+  Future<List> landingPageDecider() async {
     final SharedPreferences sharedpref = await SharedPreferences.getInstance();
     print(sharedpref.getString('id'));
     if (sharedpref.getString('id') != null) {
       final provider = Provider.of<Data>(context, listen: false);
 
       await provider.getWorks();
-      return 'home';
+      return ['home', sharedpref.getString('name')];
     } else {
-      return 'signIn';
+      return ['signIn'];
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String>(
+    return FutureBuilder<List>(
         future: landingPageDecider(),
-        builder: (context, AsyncSnapshot<String> snapshot) {
-          if (snapshot.data == 'home') return SHHomeScreen();
-          if (snapshot.data == 'signIn') return LoginScreen();
+        builder: (context, AsyncSnapshot<List> snapshot) {
+          if (snapshot.data![0] == 'home')
+            return SHHomeScreen(snapshot.data![1]);
+          if (snapshot.data![0] == 'signIn') return LoginScreen();
 
-          return SHHomeScreen();
+          return LoginScreen();
         });
   }
 }

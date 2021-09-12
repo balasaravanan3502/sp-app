@@ -19,7 +19,8 @@ import 'DownloadsScreen.dart';
 import 'SHCreateFormScreen.dart';
 
 class SHHomeScreen extends StatefulWidget {
-  const SHHomeScreen({Key? key}) : super(key: key);
+  final name;
+  SHHomeScreen(this.name);
 
   @override
   _SHHomeScreenState createState() => _SHHomeScreenState();
@@ -309,8 +310,9 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
                             child: Container(
                               width: MediaQuery.of(context).size.width * .2,
                               child: Text(
-                                " Quiz ",
+                                "Quiz",
                                 style: TextStyle(
+                                  fontSize: 13,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -338,8 +340,9 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
                             child: Container(
                               width: MediaQuery.of(context).size.width * .2,
                               child: Text(
-                                " Form ",
+                                "Form",
                                 style: TextStyle(
+                                  fontSize: 13,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -367,8 +370,9 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
                             child: Container(
                               width: MediaQuery.of(context).size.width * .23,
                               child: Text(
-                                " Acknowledge ",
+                                "Acknowledge",
                                 style: TextStyle(
+                                  fontSize: 13,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -427,7 +431,7 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
                                 ),
                               ),
                               Text(
-                                "arjun".toUpperCase(),
+                                widget.name.toUpperCase() ?? '',
                                 style: TextStyle(
                                   color: Color(0xff2C364E),
                                   fontSize: 19,
@@ -660,9 +664,6 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: new Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30.0),
-                                    ),
                                     height: 150,
                                     padding: const EdgeInsets.all(8.0),
                                     child: Neumorphic(
@@ -679,6 +680,20 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
                                       child: new Container(
                                         width: 40.0,
                                         height: 100.0,
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            left: BorderSide(
+                                              color:
+                                                  data[index]['type'] == 'form'
+                                                      ? Colors.green
+                                                      : data[index]['type'] !=
+                                                              'quiz'
+                                                          ? Colors.red
+                                                          : Colors.blue,
+                                              width: 5,
+                                            ),
+                                          ),
+                                        ),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
@@ -704,7 +719,7 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
                                                           .toString()
                                                           .capitalizeFirstofEach,
                                                       style: TextStyle(
-                                                        fontSize: 26,
+                                                        fontSize: 24,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.brown,
@@ -717,7 +732,7 @@ class _SHHomeScreenState extends State<SHHomeScreen> {
                                                       data[index]['class']!
                                                           .toString(),
                                                       style: TextStyle(
-                                                        fontSize: 20,
+                                                        fontSize: 18,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.grey,

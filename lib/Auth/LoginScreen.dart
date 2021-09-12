@@ -7,6 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sp_app/Modules/Shared/Screens/SHHomeScreen.dart';
 import 'package:sp_app/Modules/Shared/Widgets/CustomSnackBar.dart';
 import 'package:sp_app/Provider/Data.dart';
@@ -42,11 +43,14 @@ class _LoginScreenState extends State<LoginScreen> {
           .login({"email": _userId.text, "password": _password.text});
 
       if (result["code"] == '200') {
+        final SharedPreferences sharedpref =
+            await SharedPreferences.getInstance();
+
         await provider.getWorks();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => SHHomeScreen(),
+            builder: (context) => SHHomeScreen(sharedpref.getString('name')),
           ),
         );
       } else {

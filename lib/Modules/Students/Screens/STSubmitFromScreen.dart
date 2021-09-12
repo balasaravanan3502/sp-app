@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sp_app/Modules/Shared/Screens/SHHomeScreen.dart';
 import 'package:sp_app/Modules/Shared/Widgets/CustomSnackBar.dart';
 import 'package:sp_app/Provider/Data.dart';
 
@@ -54,14 +52,10 @@ class _STSubmitFormScreenState extends State<STSubmitFormScreen> {
         "answers": _values
       });
 
+      print(result['code']);
       if (result['code'] == '200') {
         await provider.getWorks();
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SHHomeScreen(),
-          ),
-        );
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           customSnackBar(
@@ -75,6 +69,7 @@ class _STSubmitFormScreenState extends State<STSubmitFormScreen> {
   @override
   Widget build(BuildContext context) {
     final data = widget.data['questions'] as List;
+    final isCompleted = widget.data['isCompleted'];
     print(data.length);
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -115,20 +110,29 @@ class _STSubmitFormScreenState extends State<STSubmitFormScreen> {
         child: Scaffold(
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () {
-              _submitted();
+              if (!isCompleted)
+                _submitted();
+              else
+                ScaffoldMessenger.of(context).showSnackBar(
+                  customSnackBar(
+                    content: 'Already sumbitted'.toString(),
+                  ),
+                );
             },
-            label: const Text(
-              'Submit Form',
+            label: Text(
+              isCompleted == false ? 'Submit Form' : 'Already sumitted',
               style: TextStyle(
-                color: Colors.black,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            icon: const Icon(
-              Icons.add,
-              color: Colors.black,
-            ),
-            backgroundColor: Color(0xffE49D70),
+            icon: isCompleted == false
+                ? Icon(
+                    Icons.add,
+                    color: Colors.white,
+                  )
+                : null,
+            backgroundColor: Color(0xff6E7FFC),
           ),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
@@ -154,20 +158,21 @@ class _STSubmitFormScreenState extends State<STSubmitFormScreen> {
                   ),
                 ),
                 actions: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 25.0),
-                    child: IconButton(
-                      color: Colors.black,
-                      icon: Icon(Icons.refresh),
-                      onPressed: () async {
-                        setState(() {
-                          _result = '';
-                          required = [];
-                          _values = [];
-                        });
-                      },
-                    ),
-                  )
+                  if (!isCompleted)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 25.0),
+                      child: IconButton(
+                        color: Colors.black,
+                        icon: Icon(Icons.refresh),
+                        onPressed: () async {
+                          setState(() {
+                            _result = '';
+                            required = [];
+                            _values = [];
+                          });
+                        },
+                      ),
+                    )
                 ],
               ),
             ),
@@ -251,11 +256,21 @@ class _STSubmitFormScreenState extends State<STSubmitFormScreen> {
                                             children: [
                                               Expanded(
                                                 child: TextFormField(
+                                                  enableInteractiveSelection:
+                                                      isCompleted
+                                                          ? false
+                                                          : true,
                                                   decoration:
                                                       TextFieldDecoration
                                                           .copyWith(
                                                     hintText: ' ',
                                                   ),
+                                                  initialValue: isCompleted
+                                                      ? widget.data[
+                                                                  'completedData']
+                                                              ['answers'][index]
+                                                          ['answer']
+                                                      : null,
                                                   validator: (val) {
                                                     if (data[index]
                                                             ['required'] ==
@@ -265,6 +280,9 @@ class _STSubmitFormScreenState extends State<STSubmitFormScreen> {
                                                     return null;
                                                   },
                                                   maxLines: null,
+                                                  focusNode: isCompleted
+                                                      ? NoKeyboardEditableTextFocusNode()
+                                                      : null,
                                                   keyboardType:
                                                       TextInputType.multiline,
                                                   onChanged: (val) {

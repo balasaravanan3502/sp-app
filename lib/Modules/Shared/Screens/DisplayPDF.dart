@@ -499,7 +499,7 @@ class _DisplayPDFState extends State<DisplayPDF>
                           color: Colors.white,
                           child: Center(
                             child: Container(
-                              color: Colors.amber,
+                              color: Color(0xff6E7FFC),
                               height: 130,
                               width: 130,
                               padding: EdgeInsets.all(20.0),

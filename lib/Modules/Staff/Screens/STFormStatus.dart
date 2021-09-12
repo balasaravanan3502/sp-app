@@ -227,13 +227,14 @@ class _STFormStatusState extends State<STFormStatus> {
                                               Text(
                                                 isCompleted
                                                     ? widget.data['completed']
-                                                            [index]['name']!
+                                                            [index]
+                                                            ['studentName']!
                                                         .toString()
-                                                        .toUpperCase()
+                                                        .capitalizeFirstofEach
                                                     : widget.data['unCompleted']
                                                             [index]['name']!
                                                         .toString()
-                                                        .toUpperCase(),
+                                                        .capitalizeFirstofEach,
                                                 style: TextStyle(
                                                   fontSize: 24,
                                                   fontWeight: FontWeight.bold,
@@ -280,10 +281,10 @@ class _STFormStatusState extends State<STFormStatus> {
                                                 final questions =
                                                     widget.data['questions'];
                                                 print(questions);
-                                                final response =
+                                                final answers =
                                                     widget.data['completed']
-                                                        [index]['response'];
-                                                print(response);
+                                                        [index]['answers'];
+                                                print(answers);
                                                 return Container(
                                                   padding: EdgeInsets.symmetric(
                                                       horizontal: 8),
@@ -297,7 +298,7 @@ class _STFormStatusState extends State<STFormStatus> {
                                                     children: [
                                                       Text(questions[indexVal]
                                                           ['question']),
-                                                      Text(response[indexVal]
+                                                      Text(answers[indexVal]
                                                           ['answer']),
                                                     ],
                                                   ),
@@ -305,7 +306,7 @@ class _STFormStatusState extends State<STFormStatus> {
                                               },
                                               itemCount: widget
                                                   .data['completed'][index]
-                                                      ['response']
+                                                      ['answers']
                                                   .length,
                                             ))
                                           : null
