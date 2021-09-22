@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sp_app/Auth/LoginScreen.dart';
+import 'package:sp_app/Modules/Shared/Screens/LoadingScreen.dart';
 import 'package:sp_app/Modules/Shared/Screens/SHCreateFormScreen.dart';
 import 'package:sp_app/Modules/Shared/Screens/SHHomeScreen.dart';
 import 'package:sp_app/Modules/Students/Screens/STSubmitFromScreen.dart';
@@ -58,9 +59,11 @@ class _LandingScreenState extends State<LandingScreen> {
 
       await provider.getWorks();
       return ['home', sharedpref.getString('name')];
-    } else {
+    }
+    if (sharedpref.getString('id') == null) {
       return ['signIn'];
     }
+    return ['loading', ''];
   }
 
   @override
@@ -72,7 +75,7 @@ class _LandingScreenState extends State<LandingScreen> {
             return SHHomeScreen(snapshot.data![1]);
           if (snapshot.data![0] == 'signIn') return LoginScreen();
 
-          return LoginScreen();
+          return LoadingScreen();
         });
   }
 }

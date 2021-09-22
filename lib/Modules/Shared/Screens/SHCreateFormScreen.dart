@@ -13,7 +13,8 @@ import 'SHHomeScreen.dart';
 
 class SHCreateFormScreen extends StatefulWidget {
   final type;
-  SHCreateFormScreen(this.type);
+  final name;
+  SHCreateFormScreen(this.type, this.name);
 
   @override
   _SHCreateFormScreenState createState() => _SHCreateFormScreenState();
@@ -90,8 +91,12 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
 
       if (result['code'] == '200') {
         await provider.getWorks();
-        Navigator.pop(context);
-        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SHHomeScreen(widget.name),
+          ),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           customSnackBar(
@@ -207,12 +212,14 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                       ? ' Create Form'
                       : widget.type == 'quiz'
                           ? 'Create Quiz'
-                          : ' Create Acknowledge',
+                          : ' Create Acknowledgement',
                   style: TextStyle(
-                    fontSize: 22,
+                    fontSize: 18,
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
                 ),
                 actions: [
                   widget.type != 'ack'
@@ -349,7 +356,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                     itemCount: _count,
                     itemBuilder: (context, index) {
                       return Card(
-                        elevation: 2,
+                        elevation: (widget.type != 'ack') ? 2 : 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -387,284 +394,301 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                         },
                                       ),
                                     ),
-                                    IconButton(
-                                      icon: Icon(isExpanded[index]
-                                          ? Icons.expand_less
-                                          : Icons.expand_more),
-                                      onPressed: () {
-                                        setState(() {
-                                          FocusManager.instance.primaryFocus
-                                              ?.unfocus();
-                                          isExpanded[index] =
-                                              !isExpanded[index];
-                                        });
-                                      },
-                                    ),
+                                    if (widget.type != 'ack')
+                                      IconButton(
+                                        icon: Icon(isExpanded[index]
+                                            ? Icons.expand_less
+                                            : Icons.expand_more),
+                                        onPressed: () {
+                                          setState(() {
+                                            FocusManager.instance.primaryFocus
+                                                ?.unfocus();
+                                            isExpanded[index] =
+                                                !isExpanded[index];
+                                          });
+                                        },
+                                      ),
                                   ],
                                 ),
-                                AnimatedContainer(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(20),
+                                if (widget.type != 'ack')
+                                  AnimatedContainer(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20),
+                                      ),
                                     ),
-                                  ),
-                                  height: isExpanded[index] ? 150 : 0,
-                                  duration: Duration(milliseconds: 400),
-                                  child: isExpanded[index]
-                                      ? Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              margin: EdgeInsets.only(top: 25),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceAround,
-                                                children: [
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .4,
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      5.0),
-                                                          child: Text(
-                                                            'Type',
-                                                            style: TextStyle(
-                                                              fontSize: 18,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      5.0),
-                                                          child: Row(
-                                                            children: [
-                                                              Radio(
-                                                                value: 1,
-                                                                groupValue:
-                                                                    _radioSelected[
-                                                                        index],
-                                                                activeColor: Color(
-                                                                    0xff0A662F),
-                                                                onChanged:
-                                                                    (value) {
-                                                                  setState(() {
-                                                                    _radioSelected[
-                                                                            index] =
-                                                                        int.parse(
-                                                                            value.toString());
-                                                                    _radioType[
-                                                                            index] =
-                                                                        'Text';
-                                                                    _onUpdate(
-                                                                        index,
-                                                                        '',
-                                                                        _radioType[
-                                                                            index],
-                                                                        required[
-                                                                            index]);
-                                                                  });
-                                                                },
-                                                              ),
-                                                              Text(
-                                                                'Text',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      5.0),
-                                                          child: Row(
-                                                            children: [
-                                                              Radio(
-                                                                value: 2,
-                                                                groupValue:
-                                                                    _radioSelected[
-                                                                        index],
-                                                                activeColor: Color(
-                                                                    0xff0A662F),
-                                                                onChanged:
-                                                                    (value) {
-                                                                  setState(() {
-                                                                    _radioSelected[
-                                                                            index] =
-                                                                        int.parse(
-                                                                            value.toString());
-                                                                    _radioType[
-                                                                            index] =
-                                                                        'Options';
-                                                                    _onUpdate(
-                                                                        index,
-                                                                        '',
-                                                                        _radioType[
-                                                                            index],
-                                                                        required[
-                                                                            index]);
-                                                                  });
-                                                                },
-                                                              ),
-                                                              Text(
-                                                                'Options',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
-                                                    children: [
-                                                      InkWell(
-                                                        onTap: () {
-                                                          setState(() {
-                                                            isExpanded.removeAt(
-                                                                index);
-                                                            _radioType.removeAt(
-                                                                index);
-                                                            _radioSelected
-                                                                .removeAt(
-                                                                    index);
-                                                            required.removeAt(
-                                                                index);
-                                                            if (_values.length >
-                                                                0) {
-                                                              _values.removeAt(
-                                                                  index);
-                                                            }
-                                                            _count--;
-                                                          });
-                                                        },
-                                                        child: Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
+                                    height: isExpanded[index] ? 150 : 0,
+                                    duration: Duration(milliseconds: 400),
+                                    child: isExpanded[index]
+                                        ? Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                margin:
+                                                    EdgeInsets.only(top: 25),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceAround,
+                                                  children: [
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
                                                                   .size
                                                                   .width *
                                                               .4,
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .end,
-                                                            children: [
-                                                              Text(
-                                                                'Remove',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                ),
-                                                              ),
-                                                              Icon(
-                                                                Icons.delete,
-                                                                size: 25,
-                                                                color: Colors
-                                                                    .redAccent,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 50,
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .end,
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
                                                         children: [
-                                                          Text(
-                                                            'Required',
-                                                            style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              fontSize: 16,
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        5.0),
+                                                            child: Text(
+                                                              'Type',
+                                                              style: TextStyle(
+                                                                fontSize: 18,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
                                                             ),
                                                           ),
-                                                          SizedBox(
-                                                            width: 20,
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        5.0),
+                                                            child: Row(
+                                                              children: [
+                                                                Radio(
+                                                                  value: 1,
+                                                                  groupValue:
+                                                                      _radioSelected[
+                                                                          index],
+                                                                  activeColor:
+                                                                      Color(
+                                                                          0xff0A662F),
+                                                                  onChanged:
+                                                                      (value) {
+                                                                    setState(
+                                                                        () {
+                                                                      _radioSelected[
+                                                                              index] =
+                                                                          int.parse(
+                                                                              value.toString());
+                                                                      _radioType[
+                                                                              index] =
+                                                                          'Text';
+                                                                      _onUpdate(
+                                                                          index,
+                                                                          '',
+                                                                          _radioType[
+                                                                              index],
+                                                                          required[
+                                                                              index]);
+                                                                    });
+                                                                  },
+                                                                ),
+                                                                Text(
+                                                                  'Text',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
-                                                          FlutterSwitch(
-                                                            width: 45.0,
-                                                            height: 25.0,
-                                                            valueFontSize: 9.0,
-                                                            toggleSize: 10.0,
-                                                            value:
-                                                                required[index],
-                                                            activeColor: Color(
-                                                                0xff0A662F),
-                                                            borderRadius: 30.0,
-                                                            padding: 7.0,
-                                                            showOnOff: true,
-                                                            onToggle: (val) {
-                                                              setState(() {
-                                                                required[
-                                                                        index] =
-                                                                    val;
-                                                                _onUpdate(
-                                                                    index,
-                                                                    '',
-                                                                    _radioType[
-                                                                        index],
-                                                                    required[
-                                                                        index]);
-                                                              });
-                                                            },
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        5.0),
+                                                            child: Row(
+                                                              children: [
+                                                                Radio(
+                                                                  value: 2,
+                                                                  groupValue:
+                                                                      _radioSelected[
+                                                                          index],
+                                                                  activeColor:
+                                                                      Color(
+                                                                          0xff0A662F),
+                                                                  onChanged:
+                                                                      (value) {
+                                                                    setState(
+                                                                        () {
+                                                                      _radioSelected[
+                                                                              index] =
+                                                                          int.parse(
+                                                                              value.toString());
+                                                                      _radioType[
+                                                                              index] =
+                                                                          'Options';
+                                                                      _onUpdate(
+                                                                          index,
+                                                                          '',
+                                                                          _radioType[
+                                                                              index],
+                                                                          required[
+                                                                              index]);
+                                                                    });
+                                                                  },
+                                                                ),
+                                                                Text(
+                                                                  'Options',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
-                                                    ],
-                                                  ),
-                                                ],
+                                                    ),
+                                                    SizedBox(
+                                                      width: 5,
+                                                    ),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .end,
+                                                      children: [
+                                                        InkWell(
+                                                          onTap: () {
+                                                            setState(() {
+                                                              isExpanded
+                                                                  .removeAt(
+                                                                      index);
+                                                              _radioType
+                                                                  .removeAt(
+                                                                      index);
+                                                              _radioSelected
+                                                                  .removeAt(
+                                                                      index);
+                                                              required.removeAt(
+                                                                  index);
+                                                              if (_values
+                                                                      .length >
+                                                                  0) {
+                                                                _values
+                                                                    .removeAt(
+                                                                        index);
+                                                              }
+                                                              _count--;
+                                                            });
+                                                          },
+                                                          child: Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                .4,
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .end,
+                                                              children: [
+                                                                Text(
+                                                                  'Remove',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                                Icon(
+                                                                  Icons.delete,
+                                                                  size: 25,
+                                                                  color: Colors
+                                                                      .redAccent,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 50,
+                                                        ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .end,
+                                                          children: [
+                                                            Text(
+                                                              'Required',
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 16,
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 20,
+                                                            ),
+                                                            FlutterSwitch(
+                                                              width: 45.0,
+                                                              height: 25.0,
+                                                              valueFontSize:
+                                                                  9.0,
+                                                              toggleSize: 10.0,
+                                                              value: required[
+                                                                  index],
+                                                              activeColor: Color(
+                                                                  0xff0A662F),
+                                                              borderRadius:
+                                                                  30.0,
+                                                              padding: 7.0,
+                                                              showOnOff: true,
+                                                              onToggle: (val) {
+                                                                setState(() {
+                                                                  required[
+                                                                          index] =
+                                                                      val;
+                                                                  _onUpdate(
+                                                                      index,
+                                                                      '',
+                                                                      _radioType[
+                                                                          index],
+                                                                      required[
+                                                                          index]);
+                                                                });
+                                                              },
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        )
-                                      : null,
-                                )
+                                            ],
+                                          )
+                                        : null,
+                                  )
                               ],
                             ),
                           ),

@@ -245,9 +245,7 @@ class _STFormStatusState extends State<STFormStatus> {
                                           ),
                                         ),
                                         Icon(isCompleted
-                                            ? isExpandedComp[index]
-                                                ? Icons.expand_less
-                                                : Icons.expand_more
+                                            ? null
                                             : isExpandedUnComp[index]
                                                 ? Icons.expand_less
                                                 : Icons.expand_more),

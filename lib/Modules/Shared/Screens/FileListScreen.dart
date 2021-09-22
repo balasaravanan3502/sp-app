@@ -13,6 +13,7 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sp_app/Modules/Shared/Screens/DisplayPDF.dart';
+import 'package:sp_app/Modules/Shared/Widgets/CustomSnackBar.dart';
 import 'package:sp_app/Provider/Data.dart';
 import 'DisplayPDF.dart';
 
@@ -810,16 +811,24 @@ class _DisplayFileState extends State<DisplayFile> {
         result.files.single.path!; // store it in the cache of file picker
     print("path  : $path");
     // setState(() => file = File(path));
-    setState(() {
-      file = File(path);
-      uploadLoading = true;
-      uploadScreen = true;
-    });
+    if (path.split('/').last.split('.').last == 'pdf')
+      setState(() {
+        file = File(path);
+        uploadLoading = true;
+        uploadScreen = true;
+      });
+    else
+      ScaffoldMessenger.of(context).showSnackBar(
+        customSnackBar(
+          content: 'Invalid File Type',
+        ),
+      );
   }
 
   Future uploadFile() async {
     if (file == null) return;
     final fileName = Path.basename(file!.path); // retrieve the file name
+
     final destination = 'files/$fileName';
     print("filename  : $fileName");
     setState(() => {uploadLoading = false});
