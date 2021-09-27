@@ -31,9 +31,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _password = TextEditingController();
 
   void _submitted() async {
-    setState(() {
-      isLoading = true;
-    });
     FocusManager.instance.primaryFocus?.unfocus();
     trySubmitted = true;
     if (_formKey.currentState!.validate()) {
@@ -54,6 +51,9 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       } else {
+        setState(() {
+          isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           customSnackBar(
             content: result['message'].toString(),
@@ -65,46 +65,48 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        backgroundColor: Color(0xffF5F6FD),
-        resizeToAvoidBottomInset: false,
-        body: LoadingOverlay(
-          color: Colors.black,
-          isLoading: isLoading,
-          progressIndicator: Center(
-            child: Container(
-              color: Color(0xff6E7FFC),
-              height: 130,
-              width: 130,
-              padding: EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Loading',
-                    style: TextStyle(
-                      fontSize: MediaQuery.of(context).size.height * 0.025,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+    return LoadingOverlay(
+      color: Colors.black,
+      isLoading: isLoading,
+      progressIndicator: Center(
+        child: Material(
+          child: Container(
+            color: Color(0xff6E7FFC),
+            height: 130,
+            width: 130,
+            padding: EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Loading',
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height * 0.025,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                  Container(
-                    height: 40,
-                    width: 40,
-                    child: LoadingIndicator(
-                        indicatorType: Indicator.ballPulseSync,
-                        colors: const [Colors.white],
-                        strokeWidth: 0,
-                        backgroundColor: Colors.transparent,
-                        pathBackgroundColor: Colors.black),
-                  ),
-                ],
-              ),
+                ),
+                Container(
+                  height: 40,
+                  width: 40,
+                  child: LoadingIndicator(
+                      indicatorType: Indicator.ballPulseSync,
+                      colors: const [Colors.white],
+                      strokeWidth: 0,
+                      backgroundColor: Colors.transparent,
+                      pathBackgroundColor: Colors.black),
+                ),
+              ],
             ),
           ),
-          child: SafeArea(
+        ),
+      ),
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          backgroundColor: Color(0xffF5F6FD),
+          resizeToAvoidBottomInset: false,
+          body: SafeArea(
             child: Container(
               padding: EdgeInsets.all(30),
               child: Column(
@@ -220,10 +222,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 // shape: StadiumBorder(),
                               ),
                               onPressed: () {
-                                _submitted();
                                 setState(() {
-                                  isLoading = false;
+                                  isLoading = true;
                                 });
+                                _submitted();
                               },
                               child: Padding(
                                 padding: const EdgeInsets.all(13.0),

@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import "package:sp_app/Helpers/Capitalize.dart";
+import 'package:sp_app/Modules/Shared/Widgets/CustomSnackBar.dart';
+import 'package:sp_app/Provider/Data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class STFormStatus extends StatefulWidget {
@@ -144,11 +147,21 @@ class _STFormStatusState extends State<STFormStatus> {
                         primary: Color(0xff6E7FFC),
                         // shape: StadiumBorder(),
                       ),
-                      onPressed: () {
-                        // _submitted();
-                        // setState(() {
-                        //   isLoading = false;
-                        // });
+                      onPressed: () async {
+                        final provider =
+                            Provider.of<Data>(context, listen: false);
+                        print(widget.data["_id"]);
+                        var result = await provider.sendMail({
+                          "workID": widget.data["_id"],
+                        });
+
+                        if (result['code'] == '200') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            customSnackBar(
+                              content: result['message'].toString(),
+                            ),
+                          );
+                        }
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(13.0),

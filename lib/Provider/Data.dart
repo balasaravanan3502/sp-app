@@ -99,4 +99,12 @@ class Data extends ChangeNotifier {
     print(response);
     return response;
   }
+
+  Future<dynamic> sendMail(body) async {
+    print(body);
+    NetworkHelper networkHelper = NetworkHelper();
+    var response = await networkHelper.postMethod('work/send-mail', body);
+    print(response);
+    return response;
+  }
 }

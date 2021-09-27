@@ -272,6 +272,7 @@ class _DisplayFileState extends State<DisplayFile> {
                                                                         updateStatus(
                                                                             fileDetails['_id'],
                                                                             true);
+                                                                        futureProvider();
                                                                         Navigator.pop(
                                                                             context);
                                                                       },
@@ -341,6 +342,7 @@ class _DisplayFileState extends State<DisplayFile> {
                                                                     TextButton(
                                                                       onPressed:
                                                                           () {
+                                                                        futureProvider();
                                                                         updateStatus(
                                                                             fileDetails['_id'],
                                                                             false);
@@ -421,12 +423,15 @@ class _DisplayFileState extends State<DisplayFile> {
                                   childAspectRatio: 3 / 3,
                                   crossAxisSpacing: 15,
                                   mainAxisSpacing: 20,
+                                  mainAxisExtent: 250,
                                 ),
                                 itemCount: materials.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   final fileDetails = materials[index];
+                                  print(materials[index]);
                                   if ((fileDetails['accepted'] == false &&
                                       !isReviewed)) return Material();
+
                                   return AnimationConfiguration.staggeredList(
                                     position: index,
                                     duration: const Duration(milliseconds: 500),
@@ -437,16 +442,16 @@ class _DisplayFileState extends State<DisplayFile> {
                                           margin: EdgeInsets.all(10.0),
                                           child: ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                              elevation: 20,
+                                              elevation: 5,
                                               primary: Colors.white,
                                               side: BorderSide(
-                                                width: 1.5,
+                                                width: .5,
                                                 color: Colors.black,
                                               ),
                                               shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20.0)),
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
+                                              ),
                                             ),
                                             onPressed: () {
                                               Navigator.push(
@@ -465,31 +470,27 @@ class _DisplayFileState extends State<DisplayFile> {
                                             },
                                             child: Column(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Container(
-                                                    child: Text(
-                                                      fileDetails[
-                                                          'materialName'],
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.black),
-                                                      maxLines: 1,
-                                                    ),
+                                                Container(
+                                                  child: Text(
+                                                    fileDetails['materialName'],
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.black),
+                                                    maxLines: 1,
                                                   ),
                                                 ),
                                                 Container(
                                                   padding: EdgeInsets.only(
                                                       left: 60.0),
                                                   child: Text(
-                                                    'Uploaded by: ARJUN',
+                                                    'Uploaded by: ${fileDetails['uploadedBy']}',
                                                     style: TextStyle(
-                                                        fontSize: 15,
+                                                        fontSize: 13,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.black),

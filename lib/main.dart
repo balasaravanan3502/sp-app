@@ -71,9 +71,11 @@ class _LandingScreenState extends State<LandingScreen> {
     return FutureBuilder<List>(
         future: landingPageDecider(),
         builder: (context, AsyncSnapshot<List> snapshot) {
-          if (snapshot.data![0] == 'home')
-            return SHHomeScreen(snapshot.data![1]);
-          if (snapshot.data![0] == 'signIn') return LoginScreen();
+          if (snapshot.data != null) {
+            if (snapshot.data![0] == 'home')
+              return SHHomeScreen(snapshot.data![1]);
+            if (snapshot.data![0] == 'signIn') return LoginScreen();
+          }
 
           return LoadingScreen();
         });
