@@ -37,9 +37,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
   List<String> file_path = [];
   Future listfiles() async {
     setState(() {
-      file_fetch = Directory(
-              "/storage/emulated/0/Android/data/com.example.project/files/")
-          .listSync();
+      file_fetch = Directory("/storage/emulated/0/Straw_Boss").listSync();
     });
     file_fetch.forEach((fileedit) {
       String extract = fileedit.toString().substring(

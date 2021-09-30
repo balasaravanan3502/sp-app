@@ -523,40 +523,58 @@ class _DisplayPDFState extends State<DisplayPDF>
     );
   }
 
-  Future downloadFile() async {
-    bool status = await _requestPermission(Permission.storage);
-    if (status) {
-      try {
-        setState(() {
-          downloading = true;
-        });
-        Dio dio = Dio();
-        String savePath = await getFilePath(widget.name);
-        await dio.download(widget.url, savePath,
-            onReceiveProgress: (rec, total) {});
-        setState(() {
-          downloading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          customSnackBar(
-            content: 'File to be downloaded successfully'.toString(),
-          ),
-        );
-      } catch (e) {
-        print(e.toString());
-      }
-    }
-  }
-
-  Future<String> getFilePath(uniqueFileName) async {
-    String path = '';
+  Future<bool> downloadFile() async {
+    Dio dio = Dio();
+    Directory? directory;
     try {
-      final dir;
-      dir = await getExternalStorageDirectory();
-      path = '${dir.path}/$uniqueFileName';
-    } catch (e) {}
+      if (Platform.isAndroid) {
+        if (await _requestPermission(Permission.storage)) {
+          print(widget.name);
+          print(widget.url);
+          directory = await getExternalStorageDirectory();
+          String newPath = "";
+          print(directory);
+          List<String> paths = directory!.path.split("/");
+          for (int x = 1; x < paths.length; x++) {
+            String folder = paths[x];
+            if (folder != "Android") {
+              newPath += "/" + folder;
+            } else {
+              break;
+            }
+          }
+          newPath = newPath + "/Straw_Boss";
+          directory = Directory(newPath);
+          print(newPath);
+        } else {
+          return false;
+        }
+      } else {
+        if (await _requestPermission(Permission.photos)) {
+          directory = await getTemporaryDirectory();
+        } else {
+          return false;
+        }
+      }
 
-    return path;
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+      if (await directory.exists()) {
+        File saveFile = File(directory.path + '/' + widget.name);
+        print(saveFile.path);
+        await dio.download(widget.url, saveFile.path,
+            onReceiveProgress: (value1, value2) {
+          setState(() {
+            String progress = (value1 / value2).toString();
+            print(progress);
+          });
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
+    return false;
   }
 
   Future<bool> _requestPermission(Permission permission) async {

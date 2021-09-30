@@ -8,6 +8,8 @@ import 'package:loading_overlay/loading_overlay.dart';
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:sp_app/constant.dart';
+
 class QueryScreen extends StatefulWidget {
   const QueryScreen({Key? key}) : super(key: key);
 
@@ -90,7 +92,7 @@ class _QueryScreenState extends State<QueryScreen> {
                 color: Colors.white,
                 child: Center(
                   child: Container(
-                    color: Colors.amber,
+                    color: Color(0xff6E7FFC),
                     height: 130,
                     width: 130,
                     padding: EdgeInsets.all(20.0),
@@ -113,7 +115,7 @@ class _QueryScreenState extends State<QueryScreen> {
                             fontSize:
                                 MediaQuery.of(context).size.height * 0.025,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                            color: Colors.white,
                           ),
                         ),
                         (post)
@@ -123,7 +125,7 @@ class _QueryScreenState extends State<QueryScreen> {
                                 width: 40,
                                 child: LoadingIndicator(
                                     indicatorType: Indicator.ballPulseSync,
-                                    colors: const [Colors.black],
+                                    colors: const [Colors.white],
                                     strokeWidth: 0,
                                     backgroundColor: Colors.transparent,
                                     pathBackgroundColor: Colors.black),
@@ -364,10 +366,10 @@ class _QueryScreenState extends State<QueryScreen> {
                           ),
                         ),
                         Container(
-                          height: MediaQuery.of(context).size.height * 0.2,
-                          width: MediaQuery.of(context).size.width * 0.7,
+                          height: MediaQuery.of(context).size.height * 0.1,
+                          width: MediaQuery.of(context).size.width * 0.5,
                           child: FittedBox(
-                            child: Image.asset('assets/3973481.jpg'),
+                            child: Image.asset('assets/images/3973481.jpg'),
                             fit: BoxFit.fill,
                           ),
                         ),
@@ -628,9 +630,9 @@ class _QueryScreenState extends State<QueryScreen> {
           height: MediaQuery.of(context).size.height * 0.07,
           width: MediaQuery.of(context).size.width * 0.8,
           decoration: BoxDecoration(
-            border: Border.all(width: 2.0, color: Colors.grey),
+            // border: Border.all(width: 2.0, color: Colors.grey),
             borderRadius: BorderRadius.circular(25.0),
-            color: Colors.grey,
+            // color: Colors.grey,
           ),
           child: Center(
             child: TextField(
@@ -688,7 +690,7 @@ class _QueryScreenState extends State<QueryScreen> {
                   setState(() {});
                 }
               },
-              decoration: InputDecoration(
+              decoration: kTextFieldDecoration.copyWith(
                   suffixIcon: CircleAvatar(
                     child: InkWell(
                       child: Icon(Icons.send_sharp),
@@ -729,7 +731,9 @@ class _QueryScreenState extends State<QueryScreen> {
                   ),
                   border: InputBorder.none,
                   hintText: 'Ask your question',
-                  hintStyle: TextStyle(fontSize: 20)),
+                  hintStyle: TextStyle(
+                    fontSize: 18,
+                  )),
             ),
           ),
         ),

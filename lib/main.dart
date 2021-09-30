@@ -8,6 +8,7 @@ import 'package:sp_app/Modules/Shared/Screens/SHCreateFormScreen.dart';
 import 'package:sp_app/Modules/Shared/Screens/SHHomeScreen.dart';
 import 'package:sp_app/Modules/Students/Screens/STSubmitFromScreen.dart';
 
+import 'Modules/Students/Screens/Quiz/IntroQuizScreen.dart';
 import 'Provider/Data.dart';
 
 Future main() async {

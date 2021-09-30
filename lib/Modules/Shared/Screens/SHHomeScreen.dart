@@ -11,8 +11,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sp_app/Auth/LoginScreen.dart';
 import "package:sp_app/Helpers/Capitalize.dart";
 import 'package:sp_app/Modules/Shared/Screens/SubjectListScreen.dart';
+import 'package:sp_app/Modules/Shared/Widgets/CustomSnackBar.dart';
 import 'package:sp_app/Modules/Staff/Screens/STFormStatus.dart';
 import 'package:sp_app/Modules/Staff/Widgets/Neumorphic_Chart/pie_chart_view.dart';
+import 'package:sp_app/Modules/Students/Screens/Quiz/IntroQuizScreen.dart';
 import 'package:sp_app/Modules/Students/Screens/STSubmitFromScreen.dart';
 import 'package:sp_app/Provider/Data.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -36,6 +38,8 @@ class _SHHomeScreenState extends State<SHHomeScreen>
   final now = DateTime.now();
   bool isCollapsed = true;
   var selected;
+  var isStaff = false;
+
   var icons = [
     Icons.home,
     Icons.label,
@@ -43,6 +47,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
     Icons.cloud_download_sharp,
   ];
   int currentIndex = 0;
+  int count = 0;
   bool _isLoading = false;
 
   final Duration duration = const Duration(milliseconds: 500);
@@ -66,7 +71,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
         Tween<double>(begin: 0.5, end: 1).animate(_controller);
     _slideAnimation = Tween<Offset>(begin: Offset(-1, 0), end: Offset(0, 0))
         .animate(_controller);
-
+    setData();
     selected = now;
     calender = [
       DateTime(now.year, now.month, now.day - 3),
@@ -81,6 +86,23 @@ class _SHHomeScreenState extends State<SHHomeScreen>
       DateTime(now.year, now.month, now.day + 6),
       DateTime(now.year, now.month, now.day + 7),
     ];
+  }
+
+  Future<void> setData() async {
+    final SharedPreferences sharedpref = await SharedPreferences.getInstance();
+    print(sharedpref.getString('id'));
+    final provider = Provider.of<Data>(context, listen: false);
+    var providerData = provider.data;
+    for (int i = 0; i <= providerData.length; i++) {
+      print(providerData[i]['completed']);
+      if (!providerData[i]['completed'].contains(sharedpref.getString('id')))
+        setState(() {
+          count++;
+        });
+    }
+    setState(() {
+      isStaff = sharedpref.getString('role') == 'staff' ? true : false;
+    });
   }
 
   @override
@@ -104,32 +126,34 @@ class _SHHomeScreenState extends State<SHHomeScreen>
     return Scaffold(
       // backgroundColor: Color.fromRGBO(193, 214, 233, 1),
       backgroundColor: isCollapsed ? Colors.white : Color(0xff2C364E),
-      floatingActionButton: !isCollapsed
-          ? null
-          : currentIndex == 0
-              ? FloatingActionButton(
-                  backgroundColor: Colors.indigoAccent,
-                  onPressed: () {
-                    setState(() => (_isLoading == true)
-                        ? (_isLoading = false)
-                        : (_isLoading = true));
-                  },
-                  child: _isLoading
-                      ? Icon(
-                          Icons.cancel_outlined,
-                          color: Colors.white,
-                        )
-                      : Icon(
-                          Icons.add,
-                          color: Colors.white,
+      floatingActionButton: isStaff
+          ? !isCollapsed
+              ? null
+              : currentIndex == 0
+                  ? FloatingActionButton(
+                      backgroundColor: Colors.indigoAccent,
+                      onPressed: () {
+                        setState(() => (_isLoading == true)
+                            ? (_isLoading = false)
+                            : (_isLoading = true));
+                      },
+                      child: _isLoading
+                          ? Icon(
+                              Icons.cancel_outlined,
+                              color: Colors.white,
+                            )
+                          : Icon(
+                              Icons.add,
+                              color: Colors.white,
+                            ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(20.0),
                         ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(20.0),
-                    ),
-                  ),
-                )
-              : null,
+                      ),
+                    )
+                  : null
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: !isCollapsed
           ? null
@@ -150,7 +174,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
               inactiveColor: Colors.indigo,
               activeColor: Colors.lightBlue,
               height: 60,
-              gapLocation: GapLocation.center,
+              gapLocation: isStaff ? GapLocation.center : GapLocation.none,
               notchSmoothness: NotchSmoothness.verySmoothEdge,
             ),
       body: LoadingOverlay(
@@ -616,6 +640,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                       ),
                       Consumer<Data>(builder: (context, tripsProvider, child) {
                         data = tripsProvider.data;
+
                         if (data.length > 0)
                           return Container(
                             margin: EdgeInsets.all(10.0),
@@ -624,7 +649,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "You have got ${data.length} task",
+                                  "You have got $count task",
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 19,
@@ -680,14 +705,33 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                                         STFormStatus(data[index]),
                                   ),
                                 );
-                              if (sharedpref.getString('role') == 'student')
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        STSubmitFormScreen(data[index]),
-                                  ),
-                                );
+                              if (sharedpref.getString('role') == 'student') {
+                                if (data[index]['type'] == 'form')
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          STSubmitFormScreen(data[index]),
+                                    ),
+                                  );
+                                if (data[index]['type'] == 'quiz') {
+                                  if (!data[index]['completed']
+                                      .contains(sharedpref.getString('id')))
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            IntroQuizScreen(data[index]),
+                                      ),
+                                    );
+                                  else
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      customSnackBar(
+                                        content: 'Already Completed',
+                                      ),
+                                    );
+                                }
+                              }
                             },
                             child: AnimationConfiguration.staggeredList(
                               position: index,

@@ -49,10 +49,9 @@ class Data extends ChangeNotifier {
         "class": sharedpref.getString('class')
       });
     }
-    print('asd');
     print(sharedpref.getString('class'));
     if (response['data'] != null) {
-      this.data = response['data'];
+      this.data = new List.from(response['data'].reversed);
     }
   }
 

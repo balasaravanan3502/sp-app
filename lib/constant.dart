@@ -35,13 +35,26 @@ const kTextFieldDecoration = InputDecoration(
   ),
   contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
   enabledBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: kPrimary, width: 1.0),
+    borderSide: BorderSide(color: Color(0xff2D5C78), width: 1.0),
     borderRadius: BorderRadius.all(Radius.circular(10.0)),
   ),
   focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: kPrimary, width: 1.5),
+    borderSide: BorderSide(color: Color(0xff2D5C78), width: 1.5),
     borderRadius: BorderRadius.all(Radius.circular(10.0)),
   ),
 );
 
 bool isFocus = false;
+
+const kSecondaryColor = Color(0xFF8B94BC);
+const kGreenColor = Color(0xFF6AC259);
+const kRedColor = Color(0xFFE92E30);
+const kGrayColor = Color(0xFFC1C1C1);
+const kBlackColor = Color(0xFF101010);
+const kPrimaryGradient = LinearGradient(
+  colors: [Color(0xff6E7FFC), Colors.lightBlueAccent],
+  begin: Alignment.centerLeft,
+  end: Alignment.centerRight,
+);
+
+const double kDefaultPadding = 20.0;

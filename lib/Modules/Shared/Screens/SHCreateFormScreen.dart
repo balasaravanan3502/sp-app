@@ -36,6 +36,13 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
   List<String> _radioType = ['Text'];
   List<Map<String, dynamic>> _values = [];
   List<bool> required = [true];
+  List<dynamic> options = [
+    {
+      "id": 0,
+      "options": ['', '', '', '']
+    }
+  ];
+  List<dynamic> correctOptions = [''];
 
   void _datePicker() async {
     final now = DateTime.now();
@@ -69,6 +76,16 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
       return;
     }
 
+    for (var i = 0; i < correctOptions.length; i++) {
+      if (correctOptions[i] == '') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          customSnackBar(
+              content: 'Correct option is not selected for ${i + 1} question'),
+        );
+        return;
+      }
+    }
+
     if (_lastDate.text != '') {
       setState(() {
         isLoading = true;
@@ -77,7 +94,10 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
       final SharedPreferences sharedpref =
           await SharedPreferences.getInstance();
       print(_values.runtimeType);
-      var result = await provider.addWork({
+      print(_values);
+      print(options);
+
+      var data = {
         'title': _title.text,
         'lastDate': _lastDate.text,
         'questions': _values,
@@ -85,7 +105,13 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
         'creatorName': sharedpref.getString('name'),
         'class': className,
         "type": widget.type,
-      });
+      };
+
+      if (widget.type == 'quiz') {
+        data = {"options": options, "correctOptions": correctOptions, ...data};
+      }
+      print(data);
+      var result = await provider.addWork(data);
 
       print(result);
 
@@ -139,13 +165,13 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
       child: LoadingOverlay(
         color: Colors.black,
         isLoading: isLoading,
-        progressIndicator: Material(
-          child: Center(
-            child: Container(
-              color: Color(0xff6E7FFC),
-              height: 130,
-              width: 130,
-              padding: EdgeInsets.all(20.0),
+        progressIndicator: Center(
+          child: Container(
+            color: Color(0xff6E7FFC),
+            height: 130,
+            width: 130,
+            padding: EdgeInsets.all(20.0),
+            child: Material(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -235,6 +261,14 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                               _radioType.add('Text');
                               _radioSelected.add(1);
                               required.add(true);
+
+                              if (widget.type == 'quiz') {
+                                options.add({
+                                  "id": options.length,
+                                  "options": ['', '', '', '']
+                                });
+                                correctOptions.add('');
+                              }
                             });
                           },
                         )
@@ -412,7 +446,227 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                       ),
                                   ],
                                 ),
-                                if (widget.type != 'ack')
+                                if (widget.type == 'quiz')
+                                  AnimatedContainer(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(20),
+                                      ),
+                                    ),
+                                    height: isExpanded[index] ? 350 : 0,
+                                    duration: Duration(milliseconds: 400),
+                                    child: isExpanded[index]
+                                        ? Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      'A',
+                                                      style: TextStyle(
+                                                        fontSize: 19,
+                                                        color:
+                                                            Color(0xff2D5C78),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 20,
+                                                    ),
+                                                    Flexible(
+                                                      child: Container(
+                                                        height: 45,
+                                                        child: TextFormField(
+                                                          decoration:
+                                                              kTextFieldDecoration
+                                                                  .copyWith(
+                                                            hintText:
+                                                                'Option A',
+                                                          ),
+                                                          maxLines: null,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .multiline,
+                                                          onChanged: (val) {
+                                                            options[index]
+                                                                    ['options']
+                                                                [0] = val;
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      'B',
+                                                      style: TextStyle(
+                                                        fontSize: 19,
+                                                        color:
+                                                            Color(0xff2D5C78),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 20,
+                                                    ),
+                                                    Flexible(
+                                                      child: Container(
+                                                        height: 45,
+                                                        child: TextFormField(
+                                                          decoration:
+                                                              kTextFieldDecoration
+                                                                  .copyWith(
+                                                            hintText:
+                                                                'Option B',
+                                                          ),
+                                                          maxLines: null,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .multiline,
+                                                          onChanged: (val) {
+                                                            options[index]
+                                                                    ['options']
+                                                                [1] = val;
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      'C',
+                                                      style: TextStyle(
+                                                        fontSize: 19,
+                                                        color:
+                                                            Color(0xff2D5C78),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 20,
+                                                    ),
+                                                    Flexible(
+                                                      child: Container(
+                                                        height: 45,
+                                                        child: TextFormField(
+                                                          decoration:
+                                                              kTextFieldDecoration
+                                                                  .copyWith(
+                                                            hintText:
+                                                                'Option C',
+                                                          ),
+                                                          maxLines: null,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .multiline,
+                                                          onChanged: (val) {
+                                                            options[index]
+                                                                    ['options']
+                                                                [2] = val;
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      'D',
+                                                      style: TextStyle(
+                                                        fontSize: 19,
+                                                        color:
+                                                            Color(0xff2D5C78),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 20,
+                                                    ),
+                                                    Flexible(
+                                                      child: Container(
+                                                        height: 45,
+                                                        child: TextFormField(
+                                                          decoration:
+                                                              kTextFieldDecoration
+                                                                  .copyWith(
+                                                            hintText:
+                                                                'Option D',
+                                                          ),
+                                                          maxLines: null,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .multiline,
+                                                          onChanged: (val) {
+                                                            options[index]
+                                                                    ['options']
+                                                                [3] = val;
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      'Correct Option',
+                                                      style: TextStyle(
+                                                        fontSize: 19,
+                                                        color:
+                                                            Color(0xff2D5C78),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 20,
+                                                    ),
+                                                    Flexible(
+                                                      child: Container(
+                                                        height: 45,
+                                                        child: TextFormField(
+                                                          decoration:
+                                                              kTextFieldDecoration
+                                                                  .copyWith(
+                                                            hintText: 'Option',
+                                                          ),
+                                                          maxLines: null,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .multiline,
+                                                          onChanged: (val) {
+                                                            correctOptions[
+                                                                index] = val;
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 20,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : null,
+                                  ),
+                                if (widget.type == 'form')
                                   AnimatedContainer(
                                     decoration: BoxDecoration(
                                       color: Colors.white,
