@@ -14,6 +14,7 @@ class NetworkHelper {
       body: json.encode(body),
     );
     var data = response.body;
+    print(data);
     return jsonDecode(data);
   }
 

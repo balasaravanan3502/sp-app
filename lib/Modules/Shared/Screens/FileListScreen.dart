@@ -4,17 +4,20 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:native_pdf_renderer/native_pdf_renderer.dart';
 import 'package:path/path.dart' as Path;
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'dart:async';
 import 'package:loading_indicator/loading_indicator.dart';
+// import 'package:pdf_render/pdf_render_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sp_app/Modules/Shared/Screens/DisplayPDF.dart';
 import 'package:sp_app/Modules/Shared/Widgets/CustomSnackBar.dart';
 import 'package:sp_app/Provider/Data.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'DisplayPDF.dart';
 
 class DisplayFile extends StatefulWidget {
@@ -43,6 +46,7 @@ class _DisplayFileState extends State<DisplayFile> {
   void initState() {
     super.initState();
     getRole();
+    futureProvider();
   }
 
   Future<void> getRole() async {
@@ -50,24 +54,23 @@ class _DisplayFileState extends State<DisplayFile> {
     isStaff = sharedpref.getString('role') == 'staff';
   }
 
+  List loaded_index = [];
   Future<String> futureProvider() async {
     final provider = Provider.of<Data>(context, listen: false);
     final SharedPreferences sharedpref = await SharedPreferences.getInstance();
     // isStaff = sharedpref.getString('role') == 'staff';
     materials = await provider.getMaterialBySuject(
         {"role": 'staff', "subjectName": widget.subjectName});
-    print(materials);
-
+    // print(materials);
+    setState(() {});
     return 'completed';
   }
 
   Future<void> updateStatus(id, status) async {
     final provider = Provider.of<Data>(context, listen: false);
-    print({"id": id, "status": status, "subjectName": widget.subjectName});
+    // print({"id": id, "status": status, "subjectName": widget.subjectName});
     var update = await provider.updateMaterialStatus(
         {"id": id, "status": status, "subjectName": widget.subjectName});
-
-    print(update);
     futureProvider();
   }
 
@@ -151,7 +154,7 @@ class _DisplayFileState extends State<DisplayFile> {
                                 itemCount: materials.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   final fileDetails = materials[index];
-                                  print(fileDetails['accepted']);
+                                  // print(fileDetails['accepted']);
                                   if ((fileDetails['accepted'] == true &&
                                       isReviewed)) return Material();
 
@@ -428,7 +431,7 @@ class _DisplayFileState extends State<DisplayFile> {
                                 itemCount: materials.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   final fileDetails = materials[index];
-                                  print(materials[index]);
+                                  // print(materials[index]);
                                   if ((fileDetails['accepted'] == false &&
                                       !isReviewed)) return Material();
 
@@ -439,21 +442,24 @@ class _DisplayFileState extends State<DisplayFile> {
                                       verticalOffset: 50.0,
                                       child: FadeInAnimation(
                                         child: Container(
+                                          clipBehavior:
+                                              Clip.antiAliasWithSaveLayer,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(20.0),
+                                            ),
+                                          ),
                                           margin: EdgeInsets.all(10.0),
                                           child: ElevatedButton(
                                             style: ElevatedButton.styleFrom(
+                                              padding: EdgeInsets.all(0),
                                               elevation: 5,
                                               primary: Colors.white,
-                                              side: BorderSide(
-                                                width: .5,
-                                                color: Colors.black,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20.0),
-                                              ),
                                             ),
                                             onPressed: () {
+                                              print(
+                                                  fileDetails['materialLink']);
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
@@ -468,32 +474,124 @@ class _DisplayFileState extends State<DisplayFile> {
                                                 ),
                                               );
                                             },
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                            child: Stack(
                                               children: [
                                                 Container(
-                                                  child: Text(
-                                                    fileDetails['materialName'],
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.black),
-                                                    maxLines: 1,
+
+                                                    // height:
+                                                    //     MediaQuery.of(context)
+                                                    //             .size
+                                                    //             .height *
+                                                    //         0.22,
+                                                    // width:
+                                                    //     MediaQuery.of(context)
+                                                    //             .size
+                                                    //             .width *
+                                                    //         0.5,
+
+                                                    // enable pdf goes here
+
+                                                    // child: SfPdfViewer.network(
+                                                    //   (fileDetails[
+                                                    //       'materialLink']),
+                                                    //   onDocumentLoaded:
+                                                    //       (PdfDocumentLoadedDetails
+                                                    //           details) async {
+                                                    //     loaded_index.add(index);
+                                                    //     await Future.delayed(
+                                                    //         Duration(seconds: 2));
+                                                    //     print(loaded_index);
+                                                    //     setState(() {});
+                                                    //   },
+                                                    //   initialZoomLevel: 0.05,
+                                                    //   canShowScrollHead: false,
+                                                    //   enableDoubleTapZooming:
+                                                    //       false,
+                                                    //   enableTextSelection: false,
+                                                    //   enableDocumentLinkAnnotation:
+                                                    //       false,
+                                                    //   canShowPaginationDialog:
+                                                    //       false,
+                                                    //   interactionMode:
+                                                    //       PdfInteractionMode.pan,
+                                                    // ),
+
+                                                    // ends here
+
+                                                    ),
+                                                Visibility(
+                                                  // here the loadig screen file goes
+                                                  visible: (loaded_index
+                                                          .contains(index))
+                                                      ? false
+                                                      : true,
+                                                  child: Center(
+                                                    child: Container(
+                                                      color: Colors.white,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.05,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.47,
+                                                      child: Image.asset(
+                                                          'assets/icons/pdf.png'),
+                                                      // child: PdfViewer.openFile(
+                                                      //   (fileDetails[
+                                                      //       'materialLink']),
+                                                      //   params: PdfViewerParams(
+                                                      //       pageNumber:
+                                                      //           1), // show the page-2
+                                                      // )
+                                                    ),
                                                   ),
                                                 ),
-                                                Container(
-                                                  padding: EdgeInsets.only(
-                                                      left: 60.0),
-                                                  child: Text(
-                                                    'Uploaded by: ${fileDetails['uploadedBy']}',
-                                                    style: TextStyle(
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.black),
+                                                Align(
+                                                  alignment: Alignment.topLeft,
+                                                  child: Container(
+                                                    width: double.infinity,
+                                                    color: Colors.black
+                                                        .withOpacity(0.2),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10,
+                                                            vertical: 10),
+                                                    child: Text(
+                                                      fileDetails[
+                                                          'materialName'],
+                                                      style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white),
+                                                      maxLines: 2,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Align(
+                                                  alignment:
+                                                      Alignment.bottomRight,
+                                                  child: Container(
+                                                    width: double.infinity,
+                                                    color: Colors.black
+                                                        .withOpacity(0.2),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10,
+                                                            vertical: 10),
+                                                    child: Text(
+                                                      fileDetails['uploadedBy'],
+                                                      textAlign: TextAlign.end,
+                                                      style: TextStyle(
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white),
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -810,7 +908,7 @@ class _DisplayFileState extends State<DisplayFile> {
     if (result == null) return;
     final path =
         result.files.single.path!; // store it in the cache of file picker
-    print("path  : $path");
+    // print("path  : $path");
     // setState(() => file = File(path));
     if (path.split('/').last.split('.').last == 'pdf')
       setState(() {
@@ -844,7 +942,8 @@ class _DisplayFileState extends State<DisplayFile> {
       "materialName": fileName,
       "subjectName": widget.subjectName,
       "materialLink": urlDownload,
-      "uploadedBy": sharedpref.getString('name')
+      "uploadedBy": sharedpref.getString('name'),
+      "accepted": sharedpref.getString('role') == 'staff'
     });
 
     setState(() => {successFul = true});

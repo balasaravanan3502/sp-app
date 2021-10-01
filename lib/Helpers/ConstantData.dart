@@ -1,11 +1,10 @@
 List<String> subjectList = [
   'Operating System',
-  'C',
-  'C++',
-  'Java',
-  'DAA',
-  'SE',
-  'TOC',
-  'Ds',
-  'ESD',
+  'C Programming',
+  'Object Oriented Programming',
+  'Design and Analysis of Algorithm',
+  'Software Engineering',
+  'Theory of Computation',
+  'Data Structures',
+  'Compiler Design',
 ];

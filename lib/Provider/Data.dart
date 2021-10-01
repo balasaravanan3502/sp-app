@@ -20,6 +20,7 @@ class Data extends ChangeNotifier {
 
     final SharedPreferences sharedpref = await SharedPreferences.getInstance();
     sharedpref.setString('id', response['id']);
+    sharedpref.setString('email', response['email']);
     sharedpref.setString('name', response['name']);
     sharedpref.setString('role', response['role']);
     if (response['role'] == 'staff') {
@@ -104,6 +105,40 @@ class Data extends ChangeNotifier {
     NetworkHelper networkHelper = NetworkHelper();
     var response = await networkHelper.postMethod('work/send-mail', body);
     print(response);
+    return response;
+  }
+
+  Future<String> linkGoogle(body) async {
+    print(body);
+    NetworkHelper networkHelper = NetworkHelper();
+    var response = await networkHelper.postMethod('auth/link-google', body);
+    print(response);
+    return response['code'];
+  }
+
+  Future<dynamic> loginGoogle(body) async {
+    print(body);
+    NetworkHelper networkHelper = NetworkHelper();
+    var response = await networkHelper.postMethod('auth/login-google', body);
+    print(response);
+    if (response['code'] == "500") return response;
+
+    this.id = response['id'];
+    final SharedPreferences sharedpref = await SharedPreferences.getInstance();
+
+    sharedpref.setString('id', response['id']);
+    sharedpref.setString('email', response['email']);
+    sharedpref.setString('name', response['name']);
+    sharedpref.setString('role', response['role']);
+    if (response['role'] == 'staff') {
+      List<String> classes = [];
+      for (int i = 0; i < response['class'].length; i++) {
+        classes.add(response['class'][i]);
+      }
+      sharedpref.setStringList('classes', classes);
+    } else {
+      sharedpref.setString('class', response['class']);
+    }
     return response;
   }
 }

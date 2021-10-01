@@ -498,7 +498,7 @@ class _DisplayPDFState extends State<DisplayPDF>
                                   fontSize: MediaQuery.of(context).size.height *
                                       0.025,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black,
+                                  color: Colors.white,
                                 ),
                               ),
                               Container(
@@ -506,7 +506,7 @@ class _DisplayPDFState extends State<DisplayPDF>
                                 width: 40,
                                 child: LoadingIndicator(
                                     indicatorType: Indicator.ballPulseSync,
-                                    colors: const [Colors.black],
+                                    colors: const [Colors.white],
                                     strokeWidth: 0,
                                     backgroundColor: Colors.transparent,
                                     pathBackgroundColor: Colors.black),
@@ -531,10 +531,13 @@ class _DisplayPDFState extends State<DisplayPDF>
         if (await _requestPermission(Permission.storage)) {
           print(widget.name);
           print(widget.url);
+
           directory = await getExternalStorageDirectory();
+
           String newPath = "";
           print(directory);
           List<String> paths = directory!.path.split("/");
+          print(paths);
           for (int x = 1; x < paths.length; x++) {
             String folder = paths[x];
             if (folder != "Android") {
@@ -545,7 +548,6 @@ class _DisplayPDFState extends State<DisplayPDF>
           }
           newPath = newPath + "/Straw_Boss";
           directory = Directory(newPath);
-          print(newPath);
         } else {
           return false;
         }
@@ -556,10 +558,12 @@ class _DisplayPDFState extends State<DisplayPDF>
           return false;
         }
       }
-
+      print(directory);
       if (!await directory.exists()) {
         await directory.create(recursive: true);
       }
+      print('bala1');
+
       if (await directory.exists()) {
         File saveFile = File(directory.path + '/' + widget.name);
         print(saveFile.path);

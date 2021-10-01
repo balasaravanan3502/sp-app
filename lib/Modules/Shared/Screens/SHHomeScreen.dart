@@ -18,6 +18,8 @@ import 'package:sp_app/Modules/Students/Screens/Quiz/IntroQuizScreen.dart';
 import 'package:sp_app/Modules/Students/Screens/STSubmitFromScreen.dart';
 import 'package:sp_app/Provider/Data.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../constant.dart';
 import 'DownloadsScreen.dart';
@@ -93,16 +95,58 @@ class _SHHomeScreenState extends State<SHHomeScreen>
     print(sharedpref.getString('id'));
     final provider = Provider.of<Data>(context, listen: false);
     var providerData = provider.data;
-    for (int i = 0; i <= providerData.length; i++) {
+    setState(() {
+      isStaff = sharedpref.getString('role') == 'staff' ? true : false;
+    });
+    for (int i = 0; i < providerData.length; i++) {
       print(providerData[i]['completed']);
       if (!providerData[i]['completed'].contains(sharedpref.getString('id')))
         setState(() {
           count++;
         });
     }
-    setState(() {
-      isStaff = sharedpref.getString('role') == 'staff' ? true : false;
+  }
+
+  final FirebaseAuth? _auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+
+  Future<String?> signInWithGoogle() async {
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount!.authentication;
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+    final UserCredential authResult =
+        await _auth!.signInWithCredential(credential);
+    final User? user = authResult.user;
+    print(user!.email);
+    print('bala');
+
+    final SharedPreferences sharedpref = await SharedPreferences.getInstance();
+    print({"email": sharedpref.getString('email')});
+
+    final provider = Provider.of<Data>(context, listen: false);
+    var res = await provider.linkGoogle({
+      "email": sharedpref.getString('email'),
+      "gmail": user.email.toString()
     });
+
+    if (res == '200')
+      ScaffoldMessenger.of(context).showSnackBar(
+        customSnackBar(
+          content: 'Gmail Linked Successfully',
+        ),
+      );
+    else
+      ScaffoldMessenger.of(context).showSnackBar(
+        customSnackBar(
+          content: 'Try Later',
+        ),
+      );
+    return user.email;
   }
 
   @override
@@ -127,32 +171,30 @@ class _SHHomeScreenState extends State<SHHomeScreen>
       // backgroundColor: Color.fromRGBO(193, 214, 233, 1),
       backgroundColor: isCollapsed ? Colors.white : Color(0xff2C364E),
       floatingActionButton: isStaff
-          ? !isCollapsed
-              ? null
-              : currentIndex == 0
-                  ? FloatingActionButton(
-                      backgroundColor: Colors.indigoAccent,
-                      onPressed: () {
-                        setState(() => (_isLoading == true)
-                            ? (_isLoading = false)
-                            : (_isLoading = true));
-                      },
-                      child: _isLoading
-                          ? Icon(
-                              Icons.cancel_outlined,
-                              color: Colors.white,
-                            )
-                          : Icon(
-                              Icons.add,
-                              color: Colors.white,
-                            ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(20.0),
+          ? currentIndex == 0
+              ? FloatingActionButton(
+                  backgroundColor: Colors.indigoAccent,
+                  onPressed: () {
+                    setState(() => (_isLoading == true)
+                        ? (_isLoading = false)
+                        : (_isLoading = true));
+                  },
+                  child: _isLoading
+                      ? Icon(
+                          Icons.cancel_outlined,
+                          color: Colors.white,
+                        )
+                      : Icon(
+                          Icons.add,
+                          color: Colors.white,
                         ),
-                      ),
-                    )
-                  : null
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.0),
+                    ),
+                  ),
+                )
+              : null
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: !isCollapsed
@@ -326,7 +368,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -389,6 +431,44 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                       Icon(
                         Icons.logout,
                         color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 50,
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                      right: MediaQuery.of(context).size.width * .4),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        child: Text("Link with Google",
+                            textAlign: TextAlign.center,
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 18)),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Container(
+                        child: InkWell(
+                          onTap: () async {
+                            signInWithGoogle();
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            child: SvgPicture.asset(
+                              'assets/icons/google.svg',
+                              fit: BoxFit.cover,
+                              allowDrawingOutsideViewBox: true,
+                            ),
+                            radius: MediaQuery.of(context).size.width * .038,
+                          ),
+                        ),
                       ),
                     ],
                   ),

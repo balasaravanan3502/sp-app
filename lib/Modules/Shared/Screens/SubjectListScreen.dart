@@ -21,10 +21,23 @@ class _SubjectListScreenState extends State<SubjectListScreen> {
         SliverPersistentHeader(
           pinned: true,
           delegate: FlexibleHeaderDelegate(
-            expandedHeight: 70,
+            expandedHeight: 60,
+            collapsedHeight: 40,
             background: MutableBackground(
               collapsedColor: Colors.lightBlueAccent,
-              expandedColor: Color(0xff6E7FFC),
+              expandedWidget: Container(
+                padding: EdgeInsets.only(top: 15),
+                color: Color(0xff6E7FFC),
+                child: Text(
+                  'Courses',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 19,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
           ),
         ),
@@ -68,7 +81,7 @@ class _SubjectListScreenState extends State<SubjectListScreen> {
                               subjectList[index],
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontSize: 22,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.indigo),
                             ),

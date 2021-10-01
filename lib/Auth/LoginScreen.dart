@@ -1,9 +1,11 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +31,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController _userId = TextEditingController();
   final TextEditingController _password = TextEditingController();
+
+  final FirebaseAuth? _auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
 
   void _submitted() async {
     FocusManager.instance.primaryFocus?.unfocus();
@@ -60,6 +65,50 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       }
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication =
+        await googleSignInAccount!.authentication;
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+    final UserCredential authResult =
+        await _auth!.signInWithCredential(credential);
+    final User? user = authResult.user;
+    print(user!.email);
+    setState(() {
+      isLoading = true;
+    });
+    final provider = Provider.of<Data>(context, listen: false);
+
+    var result = await provider.loginGoogle({
+      "gmail": "balasaravananvp02@gmail.com",
+    });
+    if (result['code'] == '200') {
+      final SharedPreferences sharedpref =
+          await SharedPreferences.getInstance();
+
+      await provider.getWorks();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SHHomeScreen(sharedpref.getString('name')),
+        ),
+      );
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        customSnackBar(
+          content: result['message'].toString(),
+        ),
+      );
     }
   }
 
@@ -114,26 +163,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
                         height: MediaQuery.of(context).size.height * .1,
                       ),
                       Text(
-                        '  Welcome Back',
+                        'Welcome Back',
                         style: TextStyle(
-                          fontSize: 37,
+                          fontSize: 33,
                           color: kPrimary,
                           fontFamily: 'Lato',
                           fontWeight: FontWeight.w900,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                       SizedBox(
                         height: 10,
                       ),
                       Text(
-                        'Let\'s sign you in.',
+                        ' Let\'s sign you in.',
                         style: TextStyle(
-                          fontSize: 32,
+                          fontSize: 27,
                           color: kPrimary,
                           fontFamily: 'Lato',
                           fontWeight: FontWeight.w700,
@@ -274,7 +325,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             radius: MediaQuery.of(context).size.width * .038,
                           ),
-                          onPressed: () {},
+                          onPressed: signInWithGoogle,
                         ),
                       ],
                     ),

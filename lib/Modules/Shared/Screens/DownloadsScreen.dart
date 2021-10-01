@@ -6,6 +6,7 @@ import 'package:share/share.dart';
 import 'package:sp_app/Modules/Shared/Screens/DisplayPDF.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'dart:io';
+import 'package:native_pdf_renderer/native_pdf_renderer.dart';
 
 class DownloadsScreen extends StatefulWidget {
   const DownloadsScreen({Key? key}) : super(key: key);
@@ -15,10 +16,11 @@ class DownloadsScreen extends StatefulWidget {
 }
 
 class _DownloadsScreenState extends State<DownloadsScreen> {
+  @override
   void initState() {
-    super.initState();
-    WidgetsFlutterBinding.ensureInitialized();
     loadfiles();
+    pdfrender();
+    super.initState();
   }
 
   void loadfiles() async {
@@ -35,9 +37,10 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
   List<FileSystemEntity> file_fetch = [];
   List<String> file_name = [];
   List<String> file_path = [];
+  bool isloaded_pdf = false;
   Future listfiles() async {
     setState(() {
-      file_fetch = Directory("/storage/emulated/0/Straw_Boss").listSync();
+      file_fetch = Directory('/storage/emulated/0/Straw_Boss').listSync();
     });
     file_fetch.forEach((fileedit) {
       String extract = fileedit.toString().substring(
@@ -51,6 +54,23 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
           fileedit.toString().length - 1);
       file_name.add(extract);
     });
+    print(file_path);
+    setState(() {});
+  }
+
+  List<PdfPageImage?> pageimage = [];
+  PdfPageImage? pageImage;
+  void pdfrender() async {
+    for (int i = 0; i < (file_path.length); i++) {
+      final document = await PdfDocument.openFile((file_path[i]));
+      final page = await document.getPage(1);
+      pageImage = await page.render(
+          backgroundColor: '#ffffff',
+          width: (page.width * 0.5).toInt(),
+          height: (page.height * 0.5).toInt());
+      await page.close();
+      pageimage.add(pageImage);
+    }
     setState(() {});
   }
 
@@ -91,6 +111,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                       Row(
                         children: [
                           Container(
+                              color: Colors.white,
                               padding: EdgeInsets.only(
                                 top: 10,
                                 bottom: 10.0,
@@ -98,27 +119,33 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                               ),
                               height: MediaQuery.of(context).size.height * 0.2,
                               width: MediaQuery.of(context).size.height * 0.2,
-                              child: Stack(
-                                children: [
-                                  SfPdfViewer.file(
-                                    File(file_path[index]),
-                                    initialZoomLevel: 0.05,
-                                    canShowScrollHead: false,
-                                    enableDoubleTapZooming: false,
-                                    enableTextSelection: false,
-                                    enableDocumentLinkAnnotation: false,
-                                    canShowPaginationDialog: false,
-                                    interactionMode: PdfInteractionMode.pan,
-                                  ),
-                                  Container(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.2,
-                                    width: MediaQuery.of(context).size.height *
-                                        0.2,
-                                    color: Colors.transparent,
-                                  )
-                                ],
-                              )),
+                              child: (pageimage.length != 0)
+                                  ? Stack(
+                                      children: [
+                                        // SfPdfViewer.file(
+                                        //   File(file_path[index]),
+                                        //   initialZoomLevel: 0.05,
+                                        //   canShowScrollHead: false,
+                                        //   enableDoubleTapZooming: false,
+                                        //   enableTextSelection: false,
+                                        //   enableDocumentLinkAnnotation: false,
+                                        //   canShowPaginationDialog: false,
+                                        //   interactionMode: PdfInteractionMode.pan,
+                                        //   onDocumentLoaded: (PdfDocumentLoadedDetails
+                                        //       details) async {
+                                        //     setState(() => isloaded_pdf = true);
+                                        //   },
+                                        //   onDocumentLoadFailed: (PdfDocumentLoadFailedDetails)async{
+                                        //       setState(() => isloaded_pdf = true);
+                                        //   },
+                                        // ),
+                                        Image(
+                                          image: MemoryImage(
+                                              pageimage[index]!.bytes),
+                                        ),
+                                      ],
+                                    )
+                                  : Container()),
                           Container(
                               padding: EdgeInsets.only(
                                 top: 10,
@@ -238,8 +265,8 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // body: (file_path.isNotEmpty)
-      body: (1 == 2)
+      body: (file_path.isNotEmpty)
+          // body: (1 == 2)
           ? futurebuilder()
           : Stack(
               children: [
