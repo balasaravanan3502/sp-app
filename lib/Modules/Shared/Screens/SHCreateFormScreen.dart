@@ -75,16 +75,29 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
       );
       return;
     }
+    if (widget.type == 'quiz')
+      for (var i = 0; i < correctOptions.length; i++) {
+        if (correctOptions[i] == '') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            customSnackBar(
+                content:
+                    'Correct option is not selected for ${i + 1} question'),
+          );
+          return;
+        }
 
-    for (var i = 0; i < correctOptions.length; i++) {
-      if (correctOptions[i] == '') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          customSnackBar(
-              content: 'Correct option is not selected for ${i + 1} question'),
-        );
-        return;
+        if (!(correctOptions[i] == 'A' ||
+            correctOptions[i] == 'B' ||
+            correctOptions[i] == 'C' ||
+            correctOptions[i] == 'D')) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            customSnackBar(
+                content:
+                    'Correct option is for ${i + 1} question is not Valid (A,B,C,D)'),
+          );
+          return;
+        }
       }
-    }
 
     if (_lastDate.text != '') {
       setState(() {
@@ -130,6 +143,9 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
           ),
         );
       }
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -171,11 +187,12 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
             height: 130,
             width: 130,
             padding: EdgeInsets.all(20.0),
-            child: Material(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Material(
+                  color: Colors.transparent,
+                  child: Text(
                     'Loading',
                     style: TextStyle(
                       fontSize: MediaQuery.of(context).size.height * 0.025,
@@ -183,18 +200,18 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                       color: Colors.white,
                     ),
                   ),
-                  Container(
-                    height: 40,
-                    width: 40,
-                    child: LoadingIndicator(
-                        indicatorType: Indicator.ballPulseSync,
-                        colors: const [Colors.white],
-                        strokeWidth: 0,
-                        backgroundColor: Colors.transparent,
-                        pathBackgroundColor: Colors.black),
-                  ),
-                ],
-              ),
+                ),
+                Container(
+                  height: 40,
+                  width: 40,
+                  child: LoadingIndicator(
+                      indicatorType: Indicator.ballPulseSync,
+                      colors: const [Colors.white],
+                      strokeWidth: 0,
+                      backgroundColor: Colors.transparent,
+                      pathBackgroundColor: Colors.black),
+                ),
+              ],
             ),
           ),
         ),

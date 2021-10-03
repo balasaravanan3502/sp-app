@@ -141,4 +141,20 @@ class Data extends ChangeNotifier {
     }
     return response;
   }
+
+  Future<dynamic> changePassword(body) async {
+    print(body);
+    NetworkHelper networkHelper = NetworkHelper();
+    var response = await networkHelper.postMethod('auth/change-password', body);
+    print(response);
+    return response;
+  }
+
+  Future<dynamic> getUserByNumber(body) async {
+    print(body);
+    NetworkHelper networkHelper = NetworkHelper();
+    var response = await networkHelper.postMethod('auth/get-user', body);
+    print(response);
+    return response;
+  }
 }

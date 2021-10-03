@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sp_app/Auth/LoginScreen.dart';
 import "package:sp_app/Helpers/Capitalize.dart";
+import 'package:sp_app/Modules/Shared/Screens/ChangePasswordScreen.dart';
 import 'package:sp_app/Modules/Shared/Screens/SubjectListScreen.dart';
 import 'package:sp_app/Modules/Shared/Widgets/CustomSnackBar.dart';
 import 'package:sp_app/Modules/Staff/Screens/STFormStatus.dart';
@@ -99,7 +100,6 @@ class _SHHomeScreenState extends State<SHHomeScreen>
       isStaff = sharedpref.getString('role') == 'staff' ? true : false;
     });
     for (int i = 0; i < providerData.length; i++) {
-      print(providerData[i]['completed']);
       if (!providerData[i]['completed'].contains(sharedpref.getString('id')))
         setState(() {
           count++;
@@ -376,9 +376,11 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                     elevation: 0,
                   ),
                   onPressed: () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => ChangePasswordScreen(false),
+                      ),
                     );
                   },
                   child: Row(
@@ -766,7 +768,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                   child:
                       Consumer<Data>(builder: (context, tripsProvider, child) {
                     data = tripsProvider.data;
-                    print(data);
+
                     return AnimationLimiter(
                       child: ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
@@ -786,7 +788,8 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                                   ),
                                 );
                               if (sharedpref.getString('role') == 'student') {
-                                if (data[index]['type'] == 'form')
+                                if (data[index]['type'] == 'form' ||
+                                    data[index]['type'] == 'ack')
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -880,7 +883,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                                                             .toString()
                                                             .capitalizeFirstofEach,
                                                         style: TextStyle(
-                                                          fontSize: 24,
+                                                          fontSize: 20,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: Colors.brown,
@@ -889,23 +892,36 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                                                       SizedBox(
                                                         height: 10,
                                                       ),
-                                                      Text(
-                                                        data[index]['class']!
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.grey,
+                                                      if (isStaff)
+                                                        Text(
+                                                          data[index]['class']!
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.grey,
+                                                          ),
                                                         ),
-                                                      ),
+                                                      if (!isStaff)
+                                                        Text(
+                                                          data[index][
+                                                                  'creatorName']!
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
                                                       SizedBox(
                                                         height: 10,
                                                       ),
                                                       Text(
                                                         data[index]['lastDate'],
                                                         style: TextStyle(
-                                                          fontSize: 15,
+                                                          fontSize: 13,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: Colors.grey,

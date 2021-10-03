@@ -77,33 +77,36 @@ class _STSubmitFormScreenState extends State<STSubmitFormScreen> {
         color: Colors.black,
         isLoading: isLoading,
         progressIndicator: Center(
-          child: Container(
-            color: Color(0xff6E7FFC),
-            height: 130,
-            width: 130,
-            padding: EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Loading',
-                  style: TextStyle(
-                    fontSize: MediaQuery.of(context).size.height * 0.025,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+          child: Material(
+            type: MaterialType.transparency,
+            child: Container(
+              color: Color(0xff6E7FFC),
+              height: 130,
+              width: 130,
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Loading',
+                    style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.height * 0.025,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-                Container(
-                  height: 40,
-                  width: 40,
-                  child: LoadingIndicator(
-                      indicatorType: Indicator.ballPulseSync,
-                      colors: const [Colors.white],
-                      strokeWidth: 0,
-                      backgroundColor: Colors.transparent,
-                      pathBackgroundColor: Colors.black),
-                ),
-              ],
+                  Container(
+                    height: 40,
+                    width: 40,
+                    child: LoadingIndicator(
+                        indicatorType: Indicator.ballPulseSync,
+                        colors: const [Colors.white],
+                        strokeWidth: 0,
+                        backgroundColor: Colors.transparent,
+                        pathBackgroundColor: Colors.black),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -546,6 +549,7 @@ class _STSubmitFormScreenState extends State<STSubmitFormScreen> {
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       )
                   ],

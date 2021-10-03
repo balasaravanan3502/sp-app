@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 // import 'package:url_launcher/url_launcher.dart';
 // import 'dart:io' show Platform;
 
@@ -19,12 +20,12 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
   @override
   void initState() {
     loadfiles();
-    pdfrender();
     super.initState();
   }
 
   void loadfiles() async {
     await listfiles();
+    await pdfrender();
   }
 
   // List<String> file = [
@@ -55,14 +56,16 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
       file_name.add(extract);
     });
     print(file_path);
+    print(pageimage.length);
     setState(() {});
   }
 
   List<PdfPageImage?> pageimage = [];
   PdfPageImage? pageImage;
-  void pdfrender() async {
+  Future pdfrender() async {
     for (int i = 0; i < (file_path.length); i++) {
       final document = await PdfDocument.openFile((file_path[i]));
+      print('page');
       final page = await document.getPage(1);
       pageImage = await page.render(
           backgroundColor: '#ffffff',
@@ -70,8 +73,12 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
           height: (page.height * 0.5).toInt());
       await page.close();
       pageimage.add(pageImage);
+      if (pageimage.length == file_path.length) {
+        futurebuilder();
+        setState(() {});
+      }
+      print(pageimage.length);
     }
-    setState(() {});
   }
 
   Widget futurebuilder() {
@@ -95,165 +102,192 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                   ),
                 );
               },
-              child: Card(
-                elevation: 1,
-                margin: EdgeInsets.all(0.7),
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  width: MediaQuery.of(context).size.height * 1,
-                  decoration: BoxDecoration(
-                    color: Colors.lightBlue,
-                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  ),
-                  margin: EdgeInsets.all(10),
-                  child: Stack(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                              color: Colors.white,
-                              padding: EdgeInsets.only(
-                                top: 10,
-                                bottom: 10.0,
-                                left: MediaQuery.of(context).size.height * 0.03,
-                              ),
-                              height: MediaQuery.of(context).size.height * 0.2,
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                child: Card(
+                  elevation: 1,
+                  margin: EdgeInsets.all(1),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.2,
+                    width: MediaQuery.of(context).size.height * 1,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                        border: Border.all(
+                          width: 0.5,
+                          color: Colors.black,
+                        )),
+                    margin: EdgeInsets.all(10),
+                    child: Stack(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.24,
                               width: MediaQuery.of(context).size.height * 0.2,
                               child: (pageimage.length != 0)
-                                  ? Stack(
+                                  ? Container(
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          right: BorderSide(
+                                            style: BorderStyle.solid,
+                                            width: 0.5,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Image(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.24,
+                                        image: MemoryImage(
+                                            pageimage[index]!.bytes),
+                                      ),
+                                    )
+                                  : Container(),
+                            ),
+                            Container(
+                              
+                                padding: EdgeInsets.only(
+                                    top:  MediaQuery.of(context).size.width *
+                                        0.01,
+                                    bottom: MediaQuery.of(context).size.width *
+                                        0.001,
+                                    left: MediaQuery.of(context).size.width *
+                                        0.01),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.2,
+                                width: MediaQuery.of(context).size.height * 0.2,
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                        child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       children: [
-                                        // SfPdfViewer.file(
-                                        //   File(file_path[index]),
-                                        //   initialZoomLevel: 0.05,
-                                        //   canShowScrollHead: false,
-                                        //   enableDoubleTapZooming: false,
-                                        //   enableTextSelection: false,
-                                        //   enableDocumentLinkAnnotation: false,
-                                        //   canShowPaginationDialog: false,
-                                        //   interactionMode: PdfInteractionMode.pan,
-                                        //   onDocumentLoaded: (PdfDocumentLoadedDetails
-                                        //       details) async {
-                                        //     setState(() => isloaded_pdf = true);
-                                        //   },
-                                        //   onDocumentLoadFailed: (PdfDocumentLoadFailedDetails)async{
-                                        //       setState(() => isloaded_pdf = true);
-                                        //   },
-                                        // ),
-                                        Image(
-                                          image: MemoryImage(
-                                              pageimage[index]!.bytes),
+                                        Text(
+                                          file_name[index].toUpperCase(),
+                                          style: TextStyle(
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.01,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                      ],
+                                    )),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.04,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.12,
+                                          child: ElevatedButton(
+                                            onPressed: () async {
+                                              List<String> file_share = [];
+                                              file_share.add(file_path[index]);
+                                              await Share.shareFiles(
+                                                file_share,
+                                                text: 'file',
+                                              );
+                                              // selectFile();
+                                            },
+                                            child: Icon(Icons.share),
+                                            style: ElevatedButton.styleFrom(
+                                              elevation: 0,
+                                              padding: EdgeInsets.all(0),
+                                              primary: Color(0xff6E7FFC),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20.0)),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.04,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.12,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              showDialog<String>(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        AlertDialog(
+                                                  title: const Text(
+                                                      'Are you sure to delete the material?'),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context),
+                                                      child:
+                                                          const Text('Cancel'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        final file = File(
+                                                            file_path[index]);
+                                                        await file.delete();
+                                                        file_fetch.clear();
+                                                        file_name.clear();
+                                                        file_path.clear();
+                                                        pageimage.clear();
+                                                        setState(() {
+                                                          futurebuilder();
+                                                          pdfrender();
+                                                          listfiles();
+                                                        });
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: const Text('OK'),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                            child: Icon(Icons.delete),
+                                            style: ElevatedButton.styleFrom(
+                                              elevation: 0,
+                                              padding: EdgeInsets.all(9),
+                                              primary: Color(0xff6E7FFC),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20.0)),
+                                            ),
+                                          ),
                                         ),
                                       ],
                                     )
-                                  : Container()),
-                          Container(
-                              padding: EdgeInsets.only(
-                                top: 10,
-                                bottom: 10.0,
-                                left: MediaQuery.of(context).size.height * 0.03,
-                              ),
-                              height: MediaQuery.of(context).size.height * 0.2,
-                              width: MediaQuery.of(context).size.height * 0.23,
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                      child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        file_name[index].toUpperCase(),
-                                        style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.02,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                    ],
-                                  )),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      ElevatedButton(
-                                        onPressed: () async {
-                                          List<String> file_share = [];
-                                          file_share.add(file_path[index]);
-                                          await Share.shareFiles(
-                                            file_share,
-                                            text: 'file',
-                                          );
-                                          // selectFile();
-                                        },
-                                        child: Icon(Icons.share),
-                                        style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.all(9),
-                                          elevation: 10,
-                                          primary: Colors.lightBlue,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20.0)),
-                                        ),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          showDialog<String>(
-                                            context: context,
-                                            builder: (BuildContext context) =>
-                                                AlertDialog(
-                                              title: const Text(
-                                                  'Are you sure to delete the material?'),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(context),
-                                                  child: const Text('Cancel'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () async {
-                                                    final file =
-                                                        File(file_path[index]);
-                                                    await file.delete();
-                                                    file_fetch.clear();
-                                                    file_name.clear();
-                                                    file_path.clear();
-                                                    setState(() {
-                                                      futurebuilder();
-                                                      listfiles();
-                                                    });
-                                                  },
-                                                  child: const Text('OK'),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                        child: Icon(Icons.delete),
-                                        style: ElevatedButton.styleFrom(
-                                          padding: EdgeInsets.all(9),
-                                          elevation: 10,
-                                          primary: Colors.lightBlue,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(20.0)),
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              )),
-                        ],
-                      ),
-                    ],
+                                  ],
+                                )),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -275,11 +309,15 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                   children: [
                     Center(
                       child: Container(
-                          height: MediaQuery.of(context).size.height * 0.2,
-                          width: MediaQuery.of(context).size.height * 0.23,
-                          color: Colors.teal,
                           child: Center(
-                            child: Text(
+                        child: Column(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/Download-cuate.svg',
+                              height: MediaQuery.of(context).size.height * 0.4,
+                              width: MediaQuery.of(context).size.width * 0.6,
+                            ),
+                            Text(
                               'NO downloads'.toUpperCase(),
                               style: TextStyle(
                                 fontSize:
@@ -288,7 +326,9 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                                 color: Colors.black,
                               ),
                             ),
-                          )),
+                          ],
+                        ),
+                      )),
                     )
                   ],
                 )

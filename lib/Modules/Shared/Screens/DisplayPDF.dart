@@ -43,6 +43,7 @@ class _DisplayPDFState extends State<DisplayPDF>
   bool search = false;
   int pageCount = 1;
   int start = 1;
+  String progress = '';
   bool downloading = false;
   late SfRangeValues _pageNum = SfRangeValues(1, pageCount);
   late Permission permission;
@@ -70,7 +71,7 @@ class _DisplayPDFState extends State<DisplayPDF>
                                 height: 50,
                                 width: 50,
                                 child: Lottie.asset(
-                                  'assets/5679-download-ui-animation.json',
+                                  'assets/animation/5679-download-ui-animation.json',
                                 ),
                               ),
                               SizedBox(
@@ -340,17 +341,20 @@ class _DisplayPDFState extends State<DisplayPDF>
                                               }
                                             },
                                             onChanged: (string) async {
-                                              _searchResult =
-                                                  (await _controller.searchText(
-                                                      _textEditingController
-                                                          .text));
-                                              setState(() => isSearch = false);
-                                              searchIndex = _searchResult
-                                                  .currentInstanceIndex;
-                                              searchCount = _searchResult
-                                                  .totalInstanceCount;
-                                              if (searchCount > 0) {
-                                                search = true;
+                                              if (string.length > 3) {
+                                                _searchResult =
+                                                    (await _controller.searchText(
+                                                        _textEditingController
+                                                            .text));
+                                                setState(
+                                                    () => isSearch = false);
+                                                searchIndex = _searchResult
+                                                    .currentInstanceIndex;
+                                                searchCount = _searchResult
+                                                    .totalInstanceCount;
+                                                if (searchCount > 0) {
+                                                  search = true;
+                                                }
                                               }
                                             },
                                             controller: _textEditingController,
@@ -365,7 +369,7 @@ class _DisplayPDFState extends State<DisplayPDF>
                                         InkWell(
                                           onTap: () async {
                                             _searchResult.nextInstance();
-                                            if (searchIndex == 1) {
+                                            if (searchIndex == searchCount) {
                                               return setState(() {
                                                 searchIndex = 1;
                                               });
@@ -450,7 +454,17 @@ class _DisplayPDFState extends State<DisplayPDF>
                                           children: [
                                             InkWell(
                                               onTap: () async {
+                                                downloading = true;
+                                                setState(() {});
                                                 await downloadFile();
+                                                downloading = false;
+                                                setState(() {});
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  customSnackBar(
+                                                      content:
+                                                          'File has been downloaded successfully'),
+                                                );
                                               },
                                               child: Icon(
                                                 Icons.cloud_download_sharp,
@@ -531,9 +545,7 @@ class _DisplayPDFState extends State<DisplayPDF>
         if (await _requestPermission(Permission.storage)) {
           print(widget.name);
           print(widget.url);
-
           directory = await getExternalStorageDirectory();
-
           String newPath = "";
           print(directory);
           List<String> paths = directory!.path.split("/");
@@ -559,10 +571,15 @@ class _DisplayPDFState extends State<DisplayPDF>
         }
       }
       print(directory);
-      if (!await directory.exists()) {
-        await directory.create(recursive: true);
+      try {
+        if (!await directory.exists()) {
+          await directory.create(recursive: false);
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          customSnackBar(content: 'Storage access has been denied!'),
+        );
       }
-      print('bala1');
 
       if (await directory.exists()) {
         File saveFile = File(directory.path + '/' + widget.name);
@@ -570,7 +587,7 @@ class _DisplayPDFState extends State<DisplayPDF>
         await dio.download(widget.url, saveFile.path,
             onReceiveProgress: (value1, value2) {
           setState(() {
-            String progress = (value1 / value2).toString();
+            progress = (value1 / value2).toString();
             print(progress);
           });
         });

@@ -32,6 +32,7 @@ class _DisplayFileState extends State<DisplayFile> {
   UploadTask? task;
   var materials = [];
   File? file;
+  bool isLoading = false;
   bool uploadScreen = false;
   bool uploadLoading = false;
   bool successFul = false;
@@ -56,12 +57,16 @@ class _DisplayFileState extends State<DisplayFile> {
 
   List loaded_index = [];
   Future<String> futureProvider() async {
+    setState(() {
+      isLoading = true;
+    });
     final provider = Provider.of<Data>(context, listen: false);
     final SharedPreferences sharedpref = await SharedPreferences.getInstance();
     // isStaff = sharedpref.getString('role') == 'staff';
     materials = await provider.getMaterialBySuject(
         {"role": 'staff', "subjectName": widget.subjectName});
-    // print(materials);
+    print('bala');
+    isLoading = false;
     setState(() {});
     return 'completed';
   }
@@ -74,585 +79,20 @@ class _DisplayFileState extends State<DisplayFile> {
     futureProvider();
   }
 
-  Widget futureBuild() {
-    return new FutureBuilder(
-        future: futureProvider(),
-        builder: (context, snapshot) {
-          if (snapshot.data == 'completed') {
-            if (materials.length == 0)
-              return Center(
-                child: Text(
-                  'No Materials Available',
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-              );
-            else {
-              return AnimationLimiter(
-                child: Column(
-                  children: [
-                    if (isStaff)
-                      Container(
-                        height: 60,
-                        margin: EdgeInsets.only(bottom: 10),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Center(
-                            child: ToggleButtons(
-                              borderRadius: BorderRadius.circular(10),
-                              children: [
-                                Container(
-                                  width: MediaQuery.of(context).size.width * .4,
-                                  child: Center(
-                                    child: Text(
-                                      "Published",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width * .4,
-                                  child: Center(
-                                    child: Text(
-                                      "To be Reviewed",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                              onPressed: (int index) {
-                                setState(() {
-                                  if (index == 0) {
-                                    isReviewed = false;
-                                  } else {
-                                    isReviewed = true;
-                                  }
-                                });
-                              },
-                              color: Color(0xff6E7FFC),
-                              selectedColor: Colors.white,
-                              fillColor: Color(0xff6E7FFC),
-                              isSelected: [!isReviewed, isReviewed],
-                              borderColor: Colors.transparent,
-                            ),
-                          ),
-                        ),
-                      ),
-                    if (isReviewed)
-                      materials.length > 0
-                          ? Flexible(
-                              child: ListView.builder(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                ),
-                                itemCount: materials.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  final fileDetails = materials[index];
-                                  // print(fileDetails['accepted']);
-                                  if ((fileDetails['accepted'] == true &&
-                                      isReviewed)) return Material();
-
-                                  return AnimationConfiguration.staggeredList(
-                                    position: index,
-                                    duration: const Duration(milliseconds: 500),
-                                    child: SlideAnimation(
-                                      verticalOffset: 10.0,
-                                      child: FadeInAnimation(
-                                        child: InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    DisplayPDF(
-                                                        url: fileDetails[
-                                                            'materialLink'],
-                                                        name: fileDetails[
-                                                            'materialName'],
-                                                        from: 'url',
-                                                        path: ''),
-                                              ),
-                                            );
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20.0),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 15.0,
-                                                      horizontal: 8),
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .3,
-                                                    child: Image.network(
-                                                      'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
-                                                    ),
-                                                  ),
-                                                  Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceAround,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Container(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            .55,
-                                                        child: Text(
-                                                          fileDetails[
-                                                              'materialName'],
-                                                          style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.black),
-                                                          maxLines: 2,
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 6,
-                                                      ),
-                                                      Container(
-                                                        child: Text(
-                                                          'Uploaded by : ${fileDetails['uploadedBy']}',
-                                                          style: TextStyle(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.black),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          InkWell(
-                                                            onTap: () {
-                                                              showDialog<
-                                                                  String>(
-                                                                context:
-                                                                    context,
-                                                                builder: (BuildContext
-                                                                        context) =>
-                                                                    AlertDialog(
-                                                                  title: const Text(
-                                                                      'Are you sure to publish the material?'),
-                                                                  actions: <
-                                                                      Widget>[
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () =>
-                                                                              Navigator.pop(context),
-                                                                      child: const Text(
-                                                                          'Cancel'),
-                                                                    ),
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        updateStatus(
-                                                                            fileDetails['_id'],
-                                                                            true);
-                                                                        futureProvider();
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      },
-                                                                      child: const Text(
-                                                                          'OK'),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              );
-                                                            },
-                                                            child: Container(
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  .23,
-                                                              height: 40,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: Colors
-                                                                    .green,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                              ),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  'Accept',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        16,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: 10,
-                                                          ),
-                                                          InkWell(
-                                                            onTap: () {
-                                                              showDialog<
-                                                                  String>(
-                                                                context:
-                                                                    context,
-                                                                builder: (BuildContext
-                                                                        context) =>
-                                                                    AlertDialog(
-                                                                  title: const Text(
-                                                                      'Are you sure to publish the material?'),
-                                                                  actions: <
-                                                                      Widget>[
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () =>
-                                                                              Navigator.pop(context),
-                                                                      child: const Text(
-                                                                          'Cancel'),
-                                                                    ),
-                                                                    TextButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        futureProvider();
-                                                                        updateStatus(
-                                                                            fileDetails['_id'],
-                                                                            false);
-                                                                        Navigator.pop(
-                                                                            context);
-                                                                      },
-                                                                      child: const Text(
-                                                                          'OK'),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              );
-                                                            },
-                                                            child: Container(
-                                                              width: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  .23,
-                                                              height: 40,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color:
-                                                                    Colors.red,
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10),
-                                                              ),
-                                                              child: Center(
-                                                                child: Text(
-                                                                  'Reject',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        16,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          : Center(
-                              child: Text(
-                                'No Materials Available',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                    if (!isReviewed)
-                      materials.length > 0
-                          ? Flexible(
-                              child: GridView.builder(
-                                gridDelegate:
-                                    SliverGridDelegateWithMaxCrossAxisExtent(
-                                  maxCrossAxisExtent:
-                                      MediaQuery.of(context).size.width * 0.8,
-                                  childAspectRatio: 3 / 3,
-                                  crossAxisSpacing: 15,
-                                  mainAxisSpacing: 20,
-                                  mainAxisExtent: 250,
-                                ),
-                                itemCount: materials.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  final fileDetails = materials[index];
-                                  // print(materials[index]);
-                                  if ((fileDetails['accepted'] == false &&
-                                      !isReviewed)) return Material();
-
-                                  return AnimationConfiguration.staggeredList(
-                                    position: index,
-                                    duration: const Duration(milliseconds: 500),
-                                    child: SlideAnimation(
-                                      verticalOffset: 50.0,
-                                      child: FadeInAnimation(
-                                        child: Container(
-                                          clipBehavior:
-                                              Clip.antiAliasWithSaveLayer,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(20.0),
-                                            ),
-                                          ),
-                                          margin: EdgeInsets.all(10.0),
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              padding: EdgeInsets.all(0),
-                                              elevation: 5,
-                                              primary: Colors.white,
-                                            ),
-                                            onPressed: () {
-                                              print(
-                                                  fileDetails['materialLink']);
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      DisplayPDF(
-                                                          url: fileDetails[
-                                                              'materialLink'],
-                                                          name: fileDetails[
-                                                              'materialName'],
-                                                          from: 'url',
-                                                          path: ''),
-                                                ),
-                                              );
-                                            },
-                                            child: Stack(
-                                              children: [
-                                                Container(
-
-                                                    // height:
-                                                    //     MediaQuery.of(context)
-                                                    //             .size
-                                                    //             .height *
-                                                    //         0.22,
-                                                    // width:
-                                                    //     MediaQuery.of(context)
-                                                    //             .size
-                                                    //             .width *
-                                                    //         0.5,
-
-                                                    // enable pdf goes here
-
-                                                    // child: SfPdfViewer.network(
-                                                    //   (fileDetails[
-                                                    //       'materialLink']),
-                                                    //   onDocumentLoaded:
-                                                    //       (PdfDocumentLoadedDetails
-                                                    //           details) async {
-                                                    //     loaded_index.add(index);
-                                                    //     await Future.delayed(
-                                                    //         Duration(seconds: 2));
-                                                    //     print(loaded_index);
-                                                    //     setState(() {});
-                                                    //   },
-                                                    //   initialZoomLevel: 0.05,
-                                                    //   canShowScrollHead: false,
-                                                    //   enableDoubleTapZooming:
-                                                    //       false,
-                                                    //   enableTextSelection: false,
-                                                    //   enableDocumentLinkAnnotation:
-                                                    //       false,
-                                                    //   canShowPaginationDialog:
-                                                    //       false,
-                                                    //   interactionMode:
-                                                    //       PdfInteractionMode.pan,
-                                                    // ),
-
-                                                    // ends here
-
-                                                    ),
-                                                Visibility(
-                                                  // here the loadig screen file goes
-                                                  visible: (loaded_index
-                                                          .contains(index))
-                                                      ? false
-                                                      : true,
-                                                  child: Center(
-                                                    child: Container(
-                                                      color: Colors.white,
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.05,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.47,
-                                                      child: Image.asset(
-                                                          'assets/icons/pdf.png'),
-                                                      // child: PdfViewer.openFile(
-                                                      //   (fileDetails[
-                                                      //       'materialLink']),
-                                                      //   params: PdfViewerParams(
-                                                      //       pageNumber:
-                                                      //           1), // show the page-2
-                                                      // )
-                                                    ),
-                                                  ),
-                                                ),
-                                                Align(
-                                                  alignment: Alignment.topLeft,
-                                                  child: Container(
-                                                    width: double.infinity,
-                                                    color: Colors.black
-                                                        .withOpacity(0.2),
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 10,
-                                                            vertical: 10),
-                                                    child: Text(
-                                                      fileDetails[
-                                                          'materialName'],
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.white),
-                                                      maxLines: 2,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Align(
-                                                  alignment:
-                                                      Alignment.bottomRight,
-                                                  child: Container(
-                                                    width: double.infinity,
-                                                    color: Colors.black
-                                                        .withOpacity(0.2),
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 10,
-                                                            vertical: 10),
-                                                    child: Text(
-                                                      fileDetails['uploadedBy'],
-                                                      textAlign: TextAlign.end,
-                                                      style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.white),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          : Center(
-                              child: Text(
-                                'No Materials Available',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                ),
-                              ),
-                            ),
-                  ],
-                ),
-              );
-            }
-          }
-
-          return Center(
-            child: Center(
-              child: Container(
-                color: Color(0xff6E7FFC),
-                height: 130,
-                width: 130,
-                padding: EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Loading',
-                      style: TextStyle(
-                        fontSize: MediaQuery.of(context).size.height * 0.025,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Container(
-                      height: 40,
-                      width: 40,
-                      child: LoadingIndicator(
-                          indicatorType: Indicator.ballPulseSync,
-                          colors: const [Colors.white],
-                          strokeWidth: 0,
-                          backgroundColor: Colors.transparent,
-                          pathBackgroundColor: Colors.black),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
-  }
+  // Widget futureBuild() {
+  //   return new FutureBuilder(
+  //       future: futureProvider(),
+  //       builder: (context, snapshot) {
+  //         if (snapshot.data == 'completed') {
+  //
+  //           }
+  //         }
+  //
+  //         return Center(
+  //           child:
+  //         );
+  //       });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -665,211 +105,810 @@ class _DisplayFileState extends State<DisplayFile> {
           title: Text(widget.subjectName),
         ),
         body: LoadingOverlay(
-            color: Colors.black,
-            progressIndicator: uploadLoading
-                ? Container(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            height: MediaQuery.of(context).size.height * 0.1,
-                            child: Text(
-                              'are you to sure to upload the file?'
-                                  .toUpperCase(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.height * 0.025,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
+          color: Colors.black,
+          progressIndicator: uploadLoading
+              ? Container(
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.1,
+                          child: Text(
+                            'are you to sure to upload the file?'.toUpperCase(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize:
+                                  MediaQuery.of(context).size.height * 0.025,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
                             ),
                           ),
                         ),
-                        Container(
-                          height: MediaQuery.of(context).size.height * .13,
-                          width: MediaQuery.of(context).size.width * 0.6,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Icon(Icons.file_present),
-                              SizedBox(
-                                width: 10.0,
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width * .4,
-                                child: Text(
-                                  '$fileName'.toUpperCase(),
-                                  maxLines: 5,
-                                  style: TextStyle(
-                                      fontSize:
-                                          MediaQuery.of(context).size.height *
-                                              0.02,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 25.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height * .13,
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            ElevatedButton(
-                              child: Text(
-                                'Yes'.toUpperCase(),
-                                style: TextStyle(
-                                  fontSize:
-                                      MediaQuery.of(context).size.height * 0.02,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.green,
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 17.0, horizontal: 30.0),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0)),
-                              ),
-                              onPressed: uploadFile,
+                            Icon(Icons.file_present),
+                            SizedBox(
+                              width: 10.0,
                             ),
-                            ElevatedButton(
-                              onPressed: () {
-                                setState(() => uploadScreen = false);
-                              },
+                            Container(
+                              width: MediaQuery.of(context).size.width * .4,
                               child: Text(
-                                'no'.toUpperCase(),
+                                '$fileName'.toUpperCase(),
+                                maxLines: 5,
                                 style: TextStyle(
                                     fontSize:
                                         MediaQuery.of(context).size.height *
                                             0.02,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white),
+                                    color: Colors.black),
                               ),
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.red,
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 17.0, horizontal: 30.0),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0)),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 25.0,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            child: Text(
+                              'Yes'.toUpperCase(),
+                              style: TextStyle(
+                                fontSize:
+                                    MediaQuery.of(context).size.height * 0.02,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
                             ),
-                          ],
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.green,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 17.0, horizontal: 30.0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0)),
+                            ),
+                            onPressed: uploadFile,
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() => uploadScreen = false);
+                            },
+                            child: Text(
+                              'no'.toUpperCase(),
+                              style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.height * 0.02,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.red,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 17.0, horizontal: 30.0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.0),
+                    ),
+                  ),
+                )
+              : successFul
+                  ? Stack(
+                      children: [
+                        Center(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: 150,
+                                          width: 150,
+                                          child: Lottie.asset(
+                                              'assets/animation/1870-check-mark-done.json',
+                                              repeat: false),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 30.0, horizontal: 0.0),
+                                          child: Text(
+                                            'File is successfully uploaded'
+                                                .toUpperCase(),
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ]),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(20.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Stack(
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.4,
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: Center(
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          height: 150,
+                                          width: 150,
+                                          child: Lottie.asset(
+                                            'assets/animation/60041-upload.json',
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 30.0, horizontal: 0.0),
+                                          child: Text(
+                                            'File is being uploaded',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ]),
+                          ),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0))),
                         ),
                       ],
                     ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20.0),
-                      ),
+          isLoading: uploadScreen,
+          child: isLoading
+              ? Center(
+                  child: Container(
+                    color: Color(0xff6E7FFC),
+                    height: 130,
+                    width: 130,
+                    padding: EdgeInsets.all(20.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Loading',
+                          style: TextStyle(
+                            fontSize:
+                                MediaQuery.of(context).size.height * 0.025,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Container(
+                          height: 40,
+                          width: 40,
+                          child: LoadingIndicator(
+                              indicatorType: Indicator.ballPulseSync,
+                              colors: const [Colors.white],
+                              strokeWidth: 0,
+                              backgroundColor: Colors.transparent,
+                              pathBackgroundColor: Colors.black),
+                        ),
+                      ],
                     ),
-                  )
-                : successFul
-                    ? Stack(
-                        children: [
-                          Center(
-                            child: Container(
-                              height: MediaQuery.of(context).size.height * 0.4,
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            height: 150,
-                                            width: 150,
-                                            child: Lottie.asset(
-                                                'assets/animation/1870-check-mark-done.json',
-                                                repeat: false),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 30.0,
-                                                horizontal: 0.0),
+                  ),
+                )
+              : Stack(
+                  children: [
+                    if (materials.length == 0 && !isLoading)
+                      Center(
+                        child: Text(
+                          'No Materials Available',
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
+                        ),
+                      )
+                    else
+                      AnimationLimiter(
+                        child: Column(
+                          children: [
+                            if (isStaff)
+                              Container(
+                                height: 60,
+                                margin: EdgeInsets.only(bottom: 10),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                    child: ToggleButtons(
+                                      borderRadius: BorderRadius.circular(10),
+                                      children: [
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .4,
+                                          child: Center(
                                             child: Text(
-                                              'File is successfully uploaded'
-                                                  .toUpperCase(),
+                                              "Published",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .4,
+                                          child: Center(
+                                            child: Text(
+                                              "To be Reviewed",
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
+                                      onPressed: (int index) {
+                                        setState(() {
+                                          if (index == 0) {
+                                            isReviewed = false;
+                                          } else {
+                                            isReviewed = true;
+                                          }
+                                        });
+                                      },
+                                      color: Color(0xff6E7FFC),
+                                      selectedColor: Colors.white,
+                                      fillColor: Color(0xff6E7FFC),
+                                      isSelected: [!isReviewed, isReviewed],
+                                      borderColor: Colors.transparent,
                                     ),
-                                  ]),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20.0),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
-                      )
-                    : Stack(
-                        children: [
-                          Container(
-                            height: MediaQuery.of(context).size.height * 0.4,
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            child: Center(
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            height: 150,
-                                            width: 150,
-                                            child: Lottie.asset(
-                                              'assets/animation/60041-upload.json',
+                            if (isReviewed)
+                              materials.length > 0
+                                  ? Flexible(
+                                      child: ListView.builder(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                        ),
+                                        itemCount: materials.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          final fileDetails = materials[index];
+                                          // print(fileDetails['accepted']);
+                                          if ((fileDetails['accepted'] ==
+                                                  true &&
+                                              isReviewed)) return Material();
+
+                                          return AnimationConfiguration
+                                              .staggeredList(
+                                            position: index,
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                            child: SlideAnimation(
+                                              verticalOffset: 10.0,
+                                              child: FadeInAnimation(
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    print('enterd');
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) => DisplayPDF(
+                                                            url: fileDetails[
+                                                                'materialLink'],
+                                                            name: fileDetails[
+                                                                'materialName'],
+                                                            from: 'url',
+                                                            path: ''),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              20.0),
+                                                    ),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          vertical: 15.0,
+                                                          horizontal: 8),
+                                                      child: Row(
+                                                        children: [
+                                                          Container(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                .3,
+                                                            child: Image.asset(
+                                                              'assets/icons/pdf.png',
+                                                            ),
+                                                          ),
+                                                          Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceAround,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Container(
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    .55,
+                                                                child: Text(
+                                                                  fileDetails[
+                                                                      'materialName'],
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Colors
+                                                                          .black),
+                                                                  maxLines: 2,
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 6,
+                                                              ),
+                                                              Container(
+                                                                child: Text(
+                                                                  'Uploaded by : ${fileDetails['uploadedBy']}',
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      color: Colors
+                                                                          .black),
+                                                                ),
+                                                              ),
+                                                              SizedBox(
+                                                                height: 10,
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  InkWell(
+                                                                    onTap: () {
+                                                                      showDialog<
+                                                                          String>(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext context) =>
+                                                                                AlertDialog(
+                                                                          title:
+                                                                              const Text('Are you sure to publish the material?'),
+                                                                          actions: <
+                                                                              Widget>[
+                                                                            TextButton(
+                                                                              onPressed: () => Navigator.pop(context),
+                                                                              child: const Text('Cancel'),
+                                                                            ),
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                updateStatus(fileDetails['_id'], true);
+                                                                                futureProvider();
+                                                                                Navigator.pop(context);
+                                                                              },
+                                                                              child: const Text('OK'),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          .23,
+                                                                      height:
+                                                                          40,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: Colors
+                                                                            .green,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10),
+                                                                      ),
+                                                                      child:
+                                                                          Center(
+                                                                        child:
+                                                                            Text(
+                                                                          'Accept',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            color:
+                                                                                Colors.white,
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            fontSize:
+                                                                                16,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 10,
+                                                                  ),
+                                                                  InkWell(
+                                                                    onTap: () {
+                                                                      showDialog<
+                                                                          String>(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext context) =>
+                                                                                AlertDialog(
+                                                                          title:
+                                                                              const Text('Are you sure to publish the material?'),
+                                                                          actions: <
+                                                                              Widget>[
+                                                                            TextButton(
+                                                                              onPressed: () => Navigator.pop(context),
+                                                                              child: const Text('Cancel'),
+                                                                            ),
+                                                                            TextButton(
+                                                                              onPressed: () {
+                                                                                futureProvider();
+                                                                                updateStatus(fileDetails['_id'], false);
+                                                                                Navigator.pop(context);
+                                                                              },
+                                                                              child: const Text('OK'),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                    child:
+                                                                        Container(
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          .23,
+                                                                      height:
+                                                                          40,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: Colors
+                                                                            .red,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10),
+                                                                      ),
+                                                                      child:
+                                                                          Center(
+                                                                        child:
+                                                                            Text(
+                                                                          'Reject',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            color:
+                                                                                Colors.white,
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            fontSize:
+                                                                                16,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 30.0,
-                                                horizontal: 0.0),
-                                            child: Text(
-                                              'File is being uploaded',
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
-                                            ),
-                                          ),
-                                        ],
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  : Center(
+                                      child: Text(
+                                        'No Materials Available',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                        ),
                                       ),
                                     ),
-                                  ]),
-                            ),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20.0))),
-                          ),
-                        ],
+                            if (!isReviewed)
+                              materials.length > 0
+                                  ? Flexible(
+                                      child: GridView.builder(
+                                        gridDelegate:
+                                            SliverGridDelegateWithMaxCrossAxisExtent(
+                                          maxCrossAxisExtent:
+                                              MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.8,
+                                          childAspectRatio: 3 / 3,
+                                          crossAxisSpacing: 15,
+                                          mainAxisSpacing: 20,
+                                          mainAxisExtent: 250,
+                                        ),
+                                        itemCount: materials.length,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          final fileDetails = materials[index];
+                                          // print(materials[index]);
+                                          if ((fileDetails['accepted'] ==
+                                                  false &&
+                                              !isReviewed)) return Material();
+
+                                          return AnimationConfiguration
+                                              .staggeredList(
+                                            position: index,
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                            child: SlideAnimation(
+                                              verticalOffset: 50.0,
+                                              child: FadeInAnimation(
+                                                child: Container(
+                                                  clipBehavior: Clip
+                                                      .antiAliasWithSaveLayer,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                      Radius.circular(20.0),
+                                                    ),
+                                                  ),
+                                                  margin: EdgeInsets.all(10.0),
+                                                  child: ElevatedButton(
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      padding:
+                                                          EdgeInsets.all(0),
+                                                      elevation: 5,
+                                                      primary: Colors.white,
+                                                    ),
+                                                    onPressed: () {
+                                                      print(fileDetails[
+                                                          'materialLink']);
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) => DisplayPDF(
+                                                              url: fileDetails[
+                                                                  'materialLink'],
+                                                              name: fileDetails[
+                                                                  'materialName'],
+                                                              from: 'url',
+                                                              path: ''),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Stack(
+                                                      children: [
+                                                        Container(
+                                                          // height:
+                                                          //     MediaQuery.of(context)
+                                                          //             .size
+                                                          //             .height *
+                                                          //         0.22,
+                                                          // width:
+                                                          //     MediaQuery.of(context)
+                                                          //             .size
+                                                          //             .width *
+                                                          //         0.5,
+
+                                                          // enable pdf goes here
+
+                                                          child: SfPdfViewer
+                                                              .network(
+                                                            (fileDetails[
+                                                                'materialLink']),
+                                                            onDocumentLoaded:
+                                                                (PdfDocumentLoadedDetails
+                                                                    details) async {
+                                                              loaded_index
+                                                                  .add(index);
+                                                              await Future.delayed(
+                                                                  Duration(
+                                                                      seconds:
+                                                                          2));
+                                                              print(
+                                                                  loaded_index);
+                                                              setState(() {});
+                                                            },
+                                                            initialZoomLevel:
+                                                                0.05,
+                                                            canShowScrollHead:
+                                                                false,
+                                                            enableDoubleTapZooming:
+                                                                false,
+                                                            enableTextSelection:
+                                                                false,
+                                                            enableDocumentLinkAnnotation:
+                                                                false,
+                                                            canShowPaginationDialog:
+                                                                false,
+                                                            interactionMode:
+                                                                PdfInteractionMode
+                                                                    .pan,
+                                                          ),
+
+                                                          // ends here
+                                                        ),
+                                                        Visibility(
+                                                          // here the loadig screen file goes
+                                                          visible: (loaded_index
+                                                                  .contains(
+                                                                      index))
+                                                              ? false
+                                                              : true,
+                                                          child: Center(
+                                                            child: Container(
+                                                              color:
+                                                                  Colors.white,
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.47,
+                                                              child: Center(
+                                                                child:
+                                                                    Image.asset(
+                                                                  'assets/icons/pdf.png',
+                                                                  height: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .height *
+                                                                      0.05,
+                                                                ),
+                                                              ),
+                                                              // child: PdfViewer.openFile(
+                                                              //   (fileDetails[
+                                                              //       'materialLink']),
+                                                              //   params: PdfViewerParams(
+                                                              //       pageNumber:
+                                                              //           1), // show the page-2
+                                                              // )
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Align(
+                                                          alignment:
+                                                              Alignment.topLeft,
+                                                          child: Container(
+                                                            width:
+                                                                double.infinity,
+                                                            color: Colors.black
+                                                                .withOpacity(
+                                                                    0.2),
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        10,
+                                                                    vertical:
+                                                                        10),
+                                                            child: Text(
+                                                              fileDetails[
+                                                                  'materialName'],
+                                                              style: TextStyle(
+                                                                  fontSize: 15,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .white),
+                                                              maxLines: 2,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Align(
+                                                          alignment: Alignment
+                                                              .bottomRight,
+                                                          child: Container(
+                                                            width:
+                                                                double.infinity,
+                                                            color: Colors.black
+                                                                .withOpacity(
+                                                                    0.2),
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        10,
+                                                                    vertical:
+                                                                        10),
+                                                            child: Text(
+                                                              fileDetails[
+                                                                  'uploadedBy'],
+                                                              textAlign:
+                                                                  TextAlign.end,
+                                                              style: TextStyle(
+                                                                  fontSize: 13,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .white),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    )
+                                  : Center(
+                                      child: Text(
+                                        'No Materials Available',
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                          ],
+                        ),
                       ),
-            isLoading: uploadScreen,
-            child: Stack(
-              children: [
-                futureBuild(),
-              ],
-            )),
+                  ],
+                ),
+        ),
         floatingActionButton: !uploadScreen
             ? Container(
                 padding: EdgeInsets.all(10.0),

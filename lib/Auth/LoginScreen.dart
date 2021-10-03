@@ -10,6 +10,7 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sp_app/Modules/Shared/Screens/ForgotPasswordScreen.dart';
 import 'package:sp_app/Modules/Shared/Screens/SHHomeScreen.dart';
 import 'package:sp_app/Modules/Shared/Widgets/CustomSnackBar.dart';
 import 'package:sp_app/Provider/Data.dart';
@@ -42,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final provider = Provider.of<Data>(context, listen: false);
 
       var result = await provider
-          .login({"email": _userId.text, "password": _password.text});
+          .login({"email": _userId.text.trim(), "password": _password.text});
 
       if (result["code"] == '200') {
         final SharedPreferences sharedpref =
@@ -87,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final provider = Provider.of<Data>(context, listen: false);
 
     var result = await provider.loginGoogle({
-      "gmail": "balasaravananvp02@gmail.com",
+      "gmail": user.email,
     });
     if (result['code'] == '200') {
       final SharedPreferences sharedpref =
@@ -156,181 +157,210 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: Color(0xffF5F6FD),
           resizeToAvoidBottomInset: false,
           body: SafeArea(
-            child: Container(
-              padding: EdgeInsets.all(30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * .1,
-                      ),
-                      Text(
-                        'Welcome Back',
-                        style: TextStyle(
-                          fontSize: 33,
-                          color: kPrimary,
-                          fontFamily: 'Lato',
-                          fontWeight: FontWeight.w900,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        ' Let\'s sign you in.',
-                        style: TextStyle(
-                          fontSize: 27,
-                          color: kPrimary,
-                          fontFamily: 'Lato',
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * .1,
-                  ),
-                  Form(
-                    key: _formKey,
-                    child: Column(
+            child: SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.all(30),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        TextFormField(
-                          controller: _userId,
-                          decoration: TextFieldDecoration.copyWith(
-                            hintText: 'Email',
-                          ),
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Enter a email';
-                            }
-                            return null;
-                          },
-                          cursorColor: Color(0xff3B73E9),
-                          onChanged: (value) {
-                            if (trySubmitted) _formKey.currentState!.validate();
-                          },
-                        ),
-                        SizedBox(
-                          height: 25,
-                        ),
-                        TextFormField(
-                          controller: _password,
-                          obscureText: !isObscure,
-                          decoration: TextFieldDecoration.copyWith(
-                            hintText: 'Password',
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  isObscure = !isObscure;
-                                });
-                              },
-                              icon: Icon(
-                                !isObscure
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: kPrimary,
-                              ),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return 'Enter a password';
-                            }
-                            return null;
-                          },
-                          cursorColor: Color(0xff3B73E9),
-                          onChanged: (value) {
-                            if (trySubmitted) _formKey.currentState!.validate();
-                          },
-                        ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * .1,
                         ),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
+                        Text(
+                          'Welcome Back',
+                          style: TextStyle(
+                            fontSize: 33,
+                            color: kPrimary,
+                            fontFamily: 'Lato',
+                            fontWeight: FontWeight.w900,
                           ),
-                          child: Neumorphic(
-                            style: NeumorphicStyle(
-                              shape: NeumorphicShape.flat,
-                              depth: 20, //customize depth here
-                              color: Color(0xff6E7FFC),
-                              border: NeumorphicBorder(
-                                color: Color.fromRGBO(193, 214, 233, 1),
-                                width: 0.8,
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          ' Let\'s sign you in.',
+                          style: TextStyle(
+                            fontSize: 27,
+                            color: kPrimary,
+                            fontFamily: 'Lato',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * .08,
+                    ),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: _userId,
+                            decoration: TextFieldDecoration.copyWith(
+                              hintText: 'Email',
+                            ),
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Enter a email';
+                              }
+                              return null;
+                            },
+                            cursorColor: Color(0xff3B73E9),
+                            onChanged: (value) {
+                              if (trySubmitted)
+                                _formKey.currentState!.validate();
+                            },
+                          ),
+                          SizedBox(
+                            height: 25,
+                          ),
+                          TextFormField(
+                            controller: _password,
+                            obscureText: !isObscure,
+                            decoration: TextFieldDecoration.copyWith(
+                              hintText: 'Password',
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isObscure = !isObscure;
+                                  });
+                                },
+                                icon: Icon(
+                                  !isObscure
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: kPrimary,
+                                ),
                               ),
                             ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                primary: Colors.transparent,
-                                // shape: StadiumBorder(),
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Enter a password';
+                              }
+                              return null;
+                            },
+                            cursorColor: Color(0xff3B73E9),
+                            onChanged: (value) {
+                              if (trySubmitted)
+                                _formKey.currentState!.validate();
+                            },
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * .04,
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                            child: Neumorphic(
+                              style: NeumorphicStyle(
+                                shape: NeumorphicShape.flat,
+                                depth: 20, //customize depth here
+                                color: Color(0xff6E7FFC),
+                                border: NeumorphicBorder(
+                                  color: Color.fromRGBO(193, 214, 233, 1),
+                                  width: 0.8,
+                                ),
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  isLoading = true;
-                                });
-                                _submitted();
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(13.0),
-                                child: Text(
-                                  'LOGIN',
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    color: Colors.white,
-                                    letterSpacing: 0.7,
-                                    fontWeight: FontWeight.w700,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  primary: Colors.transparent,
+                                  // shape: StadiumBorder(),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
+                                  _submitted();
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(13.0),
+                                  child: Text(
+                                    'LOGIN',
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      color: Colors.white,
+                                      letterSpacing: 0.7,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: 40,
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              'Or Login With',
+                          SizedBox(
+                            height: 20,
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.transparent,
+                              elevation: 0,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ForgotPasswordScreen(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Forgot Password',
                               style: TextStyle(
                                 color: kPrimary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 17,
                               ),
                             ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.transparent,
-                            elevation: 0,
                           ),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.transparent,
-                            child: SvgPicture.asset(
-                              'assets/icons/google.svg',
-                              fit: BoxFit.cover,
-                              allowDrawingOutsideViewBox: true,
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                'Or Login With',
+                                style: TextStyle(
+                                  color: kPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.transparent,
+                              elevation: 0,
                             ),
-                            radius: MediaQuery.of(context).size.width * .038,
+                            child: CircleAvatar(
+                              backgroundColor: Colors.transparent,
+                              child: SvgPicture.asset(
+                                'assets/icons/google.svg',
+                                fit: BoxFit.cover,
+                                allowDrawingOutsideViewBox: true,
+                              ),
+                              radius: MediaQuery.of(context).size.width * .038,
+                            ),
+                            onPressed: signInWithGoogle,
                           ),
-                          onPressed: signInWithGoogle,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

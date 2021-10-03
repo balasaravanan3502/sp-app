@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -83,9 +84,21 @@ class _QueryScreenState extends State<QueryScreen> {
     return Future.value(true);
   }
 
+  bool refresh = false;
   bool post = false;
   final fieldText = TextEditingController();
   final fieldText_1 = TextEditingController();
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+  void _onRefresh() async {
+    refresh = true;
+    setState(() {});
+    message();
+    await Future.delayed(Duration(milliseconds: 1000));
+    _refreshController.refreshCompleted();
+    refresh = false;
+    setState(() {});
+  }
 
   Widget messageContainer() {
     FocusScopeNode currentFocus = FocusScope.of(context);
@@ -113,20 +126,22 @@ class _QueryScreenState extends State<QueryScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        (post)
-                            ? Container(
-                                height: 40,
-                                width: 40,
-                                child: CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  child: Icon(
-                                    Icons.done,
-                                    color: Colors.white,
-                                    size: 40,
-                                  ),
-                                ),
-                              )
-                            : Container(),
+                        (refresh)
+                            ? Stack()
+                            : (post)
+                                ? Container(
+                                    height: 40,
+                                    width: 40,
+                                    child: CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      child: Icon(
+                                        Icons.done,
+                                        color: Colors.white,
+                                        size: 40,
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
                         SizedBox(
                           height: 6,
                         ),
@@ -531,18 +546,22 @@ class _QueryScreenState extends State<QueryScreen> {
                           //   content: Container(child: Text("select a subject")),
                           // ));
                           showDialog(
-                              barrierColor: Colors.lightBlue,
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text('OK'))
-                                    ],
-                                    title: Text('select a subject'),
-                                  ));
+                            barrierColor: Colors.transparent,
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK'),
+                                )
+                              ],
+                              title: Text(
+                                'Select a subject',
+                              ),
+                            ),
+                          );
                         } else {
                           subjectchoosen = true;
                           sub = subjectList[selected];
@@ -698,11 +717,11 @@ class _QueryScreenState extends State<QueryScreen> {
                             title: Text('Text is empty'),
                           ));
                 } else {
-                  post = true;
+                  // post = true;
                   text = true;
 
                   await showdialog();
-                  fo.requestFocus();
+                  fo.unfocus();
                   if (subjectchoosen) {
                     final SharedPreferences sharedpref =
                         await SharedPreferences.getInstance();
@@ -743,7 +762,8 @@ class _QueryScreenState extends State<QueryScreen> {
                         post = true;
                         text = true;
                         await showdialog();
-                        fo.requestFocus();
+                        fo.unfocus();
+                        FocusManager.instance.primaryFocus?.unfocus();
                         if (subjectchoosen) {
                           final SharedPreferences sharedpref =
                               await SharedPreferences.getInstance();
@@ -832,7 +852,7 @@ class _QueryScreenState extends State<QueryScreen> {
                   } else {
                     post = true;
                     text = true;
-                    fo_1.requestFocus();
+                    fo_1.unfocus();
                     ans = Answer(
                         username: sharedpref.getString('name')!,
                         answer: fieldText_1.text);
@@ -866,7 +886,7 @@ class _QueryScreenState extends State<QueryScreen> {
                       } else {
                         post = true;
                         text = true;
-                        fo_1.requestFocus();
+                        fo_1.unfocus();
                         // player.play();
                         ans = Answer(
                             username: sharedpref.getString('name')!,
@@ -911,205 +931,106 @@ class _QueryScreenState extends State<QueryScreen> {
       onWillPop: onbackpress,
       child: new SafeArea(
         child: Scaffold(
-          body: LoadingOverlay(
-            isLoading: answershown,
-            color: Colors.black,
-            progressIndicator: (msg1.length == 0)
-                ? Container(
-                    height: MediaQuery.of(context).size.height * 1,
-                    width: MediaQuery.of(context).size.width * 1,
-                    color: Colors.white,
-                    child: Center(
-                      child: Container(
-                        color: Color(0xff6E7FFC),
-                        height: 130,
-                        width: 130,
-                        padding: EdgeInsets.all(20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 40,
-                              width: 40,
-                              child: CircleAvatar(
-                                backgroundColor: Colors.transparent,
-                                child: Icon(
-                                  Icons.done,
-                                  color: Colors.white,
-                                  size: 50,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 6,
-                            ),
-                            Text(
-                              'Posted',
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.height * 0.025,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            (post)
-                                ? Container()
-                                : Container(
-                                    height: 40,
-                                    width: 40,
-                                    child: LoadingIndicator(
-                                        indicatorType: Indicator.ballPulseSync,
-                                        colors: const [Colors.black],
-                                        strokeWidth: 0,
-                                        backgroundColor: Colors.transparent,
-                                        pathBackgroundColor: Colors.black),
+          body: SmartRefresher(
+            enablePullDown: true,
+            // enablePullUp: true,
+            header: WaterDropHeader(),
+            controller: _refreshController,
+            onRefresh: _onRefresh,
+            onLoading: _onRefresh,
+            child: LoadingOverlay(
+              isLoading: answershown,
+              color: Colors.black,
+              progressIndicator: (msg1.length == 0)
+                  ? Container(
+                      height: MediaQuery.of(context).size.height * 1,
+                      width: MediaQuery.of(context).size.width * 1,
+                      color: Colors.white,
+                      child: Center(
+                        child: Container(
+                          color: Color(0xff6E7FFC),
+                          height: 130,
+                          width: 130,
+                          padding: EdgeInsets.all(20.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 40,
+                                width: 40,
+                                child: CircleAvatar(
+                                  backgroundColor: Colors.transparent,
+                                  child: Icon(
+                                    Icons.done,
+                                    color: Colors.white,
+                                    size: 50,
                                   ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                : Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      alignment: Alignment.bottomCenter,
-                      height: MediaQuery.of(context).size.height * 0.8,
-                      // width: MediaQuery.of(context).size.width * 0.8,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(25.0),
-                          topRight: Radius.circular(25.0),
-                        ),
-                        color: Colors.white,
-                      ),
-                      child: Stack(
-                        children: [
-                          answercontainer(),
-                          textfield_1(),
-                          Container(
-                            margin: EdgeInsets.only(top: 5),
-                            child: Align(
-                              alignment: Alignment.topRight,
-                              widthFactor: 7,
-                              child: IconButton(
-                                onPressed: () async {
-                                  answershown = false;
-                                  setState(() {});
-                                },
-                                icon: Icon(Icons.close_rounded),
-                                color: Colors.black,
+                                ),
                               ),
-                            ),
+                              SizedBox(
+                                height: 6,
+                              ),
+                              Text(
+                                'Posted',
+                                style: TextStyle(
+                                  fontSize: MediaQuery.of(context).size.height *
+                                      0.025,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              (post)
+                                  ? Container()
+                                  : Container(
+                                      height: 40,
+                                      width: 40,
+                                      child: LoadingIndicator(
+                                          indicatorType:
+                                              Indicator.ballPulseSync,
+                                          colors: const [Colors.black],
+                                          strokeWidth: 0,
+                                          backgroundColor: Colors.transparent,
+                                          pathBackgroundColor: Colors.black),
+                                    ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-            child: Stack(
-              children: [
-                GestureDetector(
-                    onTap: () async {
-                      if (currentFocus.hasFocus) {
-                        FocusScope.of(context).unfocus();
-                        messageContainer();
-                      }
-                    },
-                    child: messageContainer()),
-                textfield(),
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    margin: EdgeInsets.only(top: 13),
-                    child: Visibility(
-                      visible: issearch,
-                      child: SlideInLeft(
-                        from: 50,
-                        duration: Duration(milliseconds: 300),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    )
+                  : Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        alignment: Alignment.bottomCenter,
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        // width: MediaQuery.of(context).size.width * 0.8,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(25.0),
+                            topRight: Radius.circular(25.0),
+                          ),
+                          color: Colors.white,
+                        ),
+                        child: Stack(
                           children: [
-                            Container(
-                              padding: EdgeInsets.all(5),
-                              height: MediaQuery.of(context).size.height * 0.07,
-                              width: MediaQuery.of(context).size.width * 0.8,
-                              // color: Colors.indigo,
-                              child: new ListView.builder(
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: subjectList.length,
-                                  itemBuilder: (BuildContext ctxt, int index) {
-                                    return InkWell(
-                                      onTap: () {
-                                        searchindex = index;
-                                        search = subjectList[index];
-                                        setState(() {});
-                                        print(search);
-                                        searchbysubject(search);
-                                      },
-                                      child: new Card(
-                                        color: (searchindex == index)
-                                            ? Color(0xff6E7FFC)
-                                            : Colors.white,
-                                        elevation: 2,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                        ),
-                                        child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 20.0),
-                                            child: Center(
-                                                child: Text(
-                                              subjectList[index].toUpperCase(),
-                                              style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.016,
-                                                fontWeight: FontWeight.bold,
-                                                color: !(searchindex == index)
-                                                    ? Color(0xff6E7FFC)
-                                                    : Colors.white,
-                                              ),
-                                            ))),
-                                      ),
-                                    );
-                                  }),
-                            ),
-                            // Container(
-                            //   height: MediaQuery.of(context).size.height * 0.06,
-                            //   width: MediaQuery.of(context).size.width * 0.1,
-                            //   color: Colors.lightBlue,
-                            //   margin: EdgeInsets.only(top: 10),
-                            //   child: ElevatedButton(
-                            //     style: ElevatedButton.styleFrom(
-                            //         shape: CircleBorder(),
-                            //         elevation: 6,
-                            //         primary: Colors.purple),
-                            //     onPressed: () async {
-                            //       print('a');
-                            //       issearch = false;
-                            //       setState(() {});
-                            //     },
-                            //     child: Text('press'),
-                            //     // child: Icon(
-                            //     //   Icons.refresh_outlined,
-                            //     //   color: Colors.black,
-                            //     // ),
-                            //   ),
-                            // ),
-                            CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              radius: 30,
-                              child: InkWell(
-                                onTap: () async {
-                                  issearch = false;
-                                  searchindex = 9999;
-                                  getquestion();
-                                  setState(() {});
-                                },
-                                child: Icon(
-                                  Icons.cancel,
-                                  color: Colors.black,
+                            answercontainer(),
+                            textfield_1(),
+                            Align(
+                              alignment: Alignment.topRight, //changes
+                              child: Container(
+                                padding: EdgeInsets.only(right: 10), //changes
+                                margin: EdgeInsets.only(top: 5),
+                                child: Align(
+                                  alignment: Alignment.topRight,
+                                  widthFactor: 7,
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      answershown = false;
+                                      text = false;
+                                      setState(() {});
+                                    },
+                                    icon: Icon(Icons.close_rounded),
+                                    color: Colors.black,
+                                  ),
                                 ),
                               ),
                             ),
@@ -1117,34 +1038,152 @@ class _QueryScreenState extends State<QueryScreen> {
                         ),
                       ),
                     ),
-                  ),
-                ),
-                Visibility(
-                  visible: (!issearch),
-                  child: Align(
+              child: Stack(
+                children: [
+                  GestureDetector(
+                      onTap: () async {
+                        if (currentFocus.hasFocus) {
+                          FocusScope.of(context).unfocus();
+                          messageContainer();
+                        }
+                      },
+                      child: messageContainer()),
+                  textfield(),
+                  Align(
                     alignment: Alignment.topLeft,
                     child: Container(
-                      margin: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height * 0.02,
-                          left: 18),
-                      child: CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        radius: 30,
-                        child: InkWell(
-                          onTap: () async {
-                            issearch = true;
-                            setState(() {});
-                          },
-                          child: Icon(
-                            Icons.search,
-                            color: Colors.black,
+                      margin: EdgeInsets.only(top: 13),
+                      child: Visibility(
+                        visible: issearch,
+                        child: SlideInLeft(
+                          from: 50,
+                          duration: Duration(milliseconds: 300),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(5),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.07,
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                // color: Colors.indigo,
+                                child: new ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: subjectList.length,
+                                    itemBuilder:
+                                        (BuildContext ctxt, int index) {
+                                      return InkWell(
+                                        onTap: () {
+                                          searchindex = index;
+                                          search = subjectList[index];
+                                          setState(() {});
+                                          print(search);
+                                          searchbysubject(search);
+                                        },
+                                        child: new Card(
+                                          color: (searchindex == index)
+                                              ? Color(0xff6E7FFC)
+                                              : Colors.white,
+                                          elevation: 2,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                          ),
+                                          child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 20.0),
+                                              child: Center(
+                                                  child: Text(
+                                                subjectList[index]
+                                                    .toUpperCase(),
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .height *
+                                                          0.016,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: !(searchindex == index)
+                                                      ? Color(0xff6E7FFC)
+                                                      : Colors.white,
+                                                ),
+                                              ))),
+                                        ),
+                                      );
+                                    }),
+                              ),
+                              // Container(
+                              //   height: MediaQuery.of(context).size.height * 0.06,
+                              //   width: MediaQuery.of(context).size.width * 0.1,
+                              //   color: Colors.lightBlue,
+                              //   margin: EdgeInsets.only(top: 10),
+                              //   child: ElevatedButton(
+                              //     style: ElevatedButton.styleFrom(
+                              //         shape: CircleBorder(),
+                              //         elevation: 6,
+                              //         primary: Colors.purple),
+                              //     onPressed: () async {
+                              //       print('a');
+                              //       issearch = false;
+                              //       setState(() {});
+                              //     },
+                              //     child: Text('press'),
+                              //     // child: Icon(
+                              //     //   Icons.refresh_outlined,
+                              //     //   color: Colors.black,
+                              //     // ),
+                              //   ),
+                              // ),
+                              CircleAvatar(
+                                backgroundColor: Colors.transparent,
+                                radius: 30,
+                                child: InkWell(
+                                  onTap: () async {
+                                    fo.unfocus();
+                                    issearch = false;
+                                    searchindex = 9999;
+                                    getquestion();
+                                    setState(() {});
+                                  },
+                                  child: Icon(
+                                    Icons.cancel,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  Visibility(
+                    visible: (!issearch),
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * 0.02,
+                            left: 18),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          radius: 30,
+                          child: InkWell(
+                            onTap: () async {
+                              issearch = true;
+                              setState(() {});
+                            },
+                            child: Icon(
+                              Icons.search,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -1156,6 +1195,7 @@ class _QueryScreenState extends State<QueryScreen> {
     msg1.clear();
     msg2.clear();
     setState(() {});
+    print('entered 1');
     database.once().then((event) {
       Map<String, dynamic>.from((event.value)).values.forEach((element) {
         Map<String, dynamic> map =
@@ -1163,6 +1203,7 @@ class _QueryScreenState extends State<QueryScreen> {
         msg1.add(map);
       });
       msg2 = new List.from(msg1.reversed);
+
       if (answershown) {
         getanswer(ques, user, date_1);
       } else if (issearch) {
@@ -1190,7 +1231,9 @@ class _QueryScreenState extends State<QueryScreen> {
     } catch (e) {
       print(e);
     }
-    await message();
+    text = false;
+    fo.unfocus();
+    // await message();
     return;
   }
 
@@ -1247,6 +1290,7 @@ class _QueryScreenState extends State<QueryScreen> {
   }
 
   Future getquestion() async {
+    print('entered');
     que1.clear();
     user2.clear();
     time.clear();
@@ -1300,3 +1344,5 @@ class Answer {
     required this.answer,
   });
 }
+
+
