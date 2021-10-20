@@ -206,6 +206,8 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                   return;
                 else {
                   setState(() {
+                    if (index == 1 || index == 2 || index == 3)
+                      _isLoading = false;
                     currentIndex = index;
                   });
                 }
@@ -223,119 +225,122 @@ class _SHHomeScreenState extends State<SHHomeScreen>
         color: Colors.black,
         progressIndicator: Align(
           alignment: Alignment.bottomCenter,
-          heightFactor: 12,
           child: AnimationLimiter(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: AnimationConfiguration.toStaggeredList(
-                duration: const Duration(milliseconds: 375),
-                childAnimationBuilder: (widget) => SlideAnimation(
-                  horizontalOffset: 50.0,
-                  child: FadeInAnimation(
-                    child: widget,
-                  ),
-                ),
-                children: [
-                  Container(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          color: Colors.lightBlue,
-                          elevation: 10,
-                          child: MaterialButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      SHCreateFormScreen('quiz', widget.name),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * .2,
-                              child: Text(
-                                "Quiz",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          color: Colors.lightBlue,
-                          elevation: 10,
-                          child: MaterialButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      SHCreateFormScreen('form', widget.name),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * .2,
-                              child: Text(
-                                "Form",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          color: Colors.lightBlue,
-                          elevation: 10,
-                          child: MaterialButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      SHCreateFormScreen('ack', widget.name),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * .23,
-                              child: Text(
-                                "Acknowledge",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+            child: Container(
+              margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height * .07),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: AnimationConfiguration.toStaggeredList(
+                  duration: const Duration(milliseconds: 375),
+                  childAnimationBuilder: (widget) => SlideAnimation(
+                    horizontalOffset: 50.0,
+                    child: FadeInAnimation(
+                      child: widget,
                     ),
                   ),
-                ],
+                  children: [
+                    Container(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            color: Colors.lightBlue,
+                            elevation: 10,
+                            child: MaterialButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        SHCreateFormScreen('quiz', widget.name),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * .2,
+                                child: Text(
+                                  "Quiz",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            color: Colors.lightBlue,
+                            elevation: 10,
+                            child: MaterialButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        SHCreateFormScreen('form', widget.name),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * .2,
+                                child: Text(
+                                  "Form",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            color: Colors.lightBlue,
+                            elevation: 10,
+                            child: MaterialButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        SHCreateFormScreen('ack', widget.name),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * .23,
+                                child: Text(
+                                  "Acknowledge",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -387,9 +392,10 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                     children: [
                       Container(
                         width: MediaQuery.of(context).size.width * .25,
-                        child: Text("Change\nPassword",
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 20)),
+                        child: Text(
+                          "Change\nPassword",
+                          style: TextStyle(color: Colors.white, fontSize: 17),
+                        ),
                       ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * .16,
@@ -425,7 +431,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                         width: MediaQuery.of(context).size.width * .25,
                         child: Text("Logout",
                             style:
-                                TextStyle(color: Colors.white, fontSize: 20)),
+                                TextStyle(color: Colors.white, fontSize: 17)),
                       ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * .16,
@@ -448,10 +454,11 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                        child: Text("Link with Google",
-                            textAlign: TextAlign.center,
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 18)),
+                        child: Text(
+                          "Link with Google",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white, fontSize: 17),
+                        ),
                       ),
                       SizedBox(
                         height: 20,
@@ -536,7 +543,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
             child: ListView(
               children: <Widget>[
                 Container(
-                  height: 100,
+                  height: 90,
                   child: Row(
                     children: [
                       ElevatedButton(
@@ -560,7 +567,8 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.all(15.0),
+                        margin:
+                            EdgeInsets.symmetric(vertical: 15.0, horizontal: 5),
                         child: Row(
                           children: [
                             // Container(child: circleavatar),
@@ -592,7 +600,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 5.0, bottom: 20.0, left: 20),
+                  margin: EdgeInsets.only(bottom: 20.0, left: 20),
                   padding: EdgeInsets.symmetric(vertical: 1.0),
                   height: 100,
                   child: new ListView.builder(
@@ -619,7 +627,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                                             .toString(),
                                         style: TextStyle(
                                           color: Color(0xffa6a5ba),
-                                          fontSize: 16,
+                                          fontSize: 14.5,
                                           // fontWeight: FontWeight.w900,
                                         ),
                                       ),
@@ -636,7 +644,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                                             .toString(),
                                         style: TextStyle(
                                           color: Color(0xff2C364E),
-                                          fontSize: 19,
+                                          fontSize: 15,
                                           fontWeight: FontWeight.w900,
                                         ),
                                       ),
@@ -653,7 +661,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                                 color: Color(0xff6E7FFC),
                               ),
                               margin: EdgeInsets.symmetric(
-                                  horizontal: 5.5, vertical: 2),
+                                  horizontal: 5.5, vertical: 5),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -665,7 +673,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                                           .toString(),
                                       style: TextStyle(
                                         color: Colors.grey.shade100,
-                                        fontSize: 16,
+                                        fontSize: 15,
                                         // fontWeight: FontWeight.w900,
                                       ),
                                     ),
@@ -682,7 +690,7 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                                           .toString(),
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 19,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.w900,
                                       ),
                                     ),
@@ -758,7 +766,23 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                             ),
                           );
                         else
-                          return Container();
+                          return Container(
+                            margin: EdgeInsets.all(10.0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "You are done with you work",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
                       }),
                     ],
                   ),
@@ -768,192 +792,210 @@ class _SHHomeScreenState extends State<SHHomeScreen>
                   child:
                       Consumer<Data>(builder: (context, tripsProvider, child) {
                     data = tripsProvider.data;
+                    if (data.length > 0)
+                      return AnimationLimiter(
+                        child: ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () async {
+                                final SharedPreferences sharedpref =
+                                    await SharedPreferences.getInstance();
 
-                    return AnimationLimiter(
-                      child: ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () async {
-                              final SharedPreferences sharedpref =
-                                  await SharedPreferences.getInstance();
-
-                              if (sharedpref.getString('role') == 'staff')
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        STFormStatus(data[index]),
-                                  ),
-                                );
-                              if (sharedpref.getString('role') == 'student') {
-                                if (data[index]['type'] == 'form' ||
-                                    data[index]['type'] == 'ack')
+                                if (sharedpref.getString('role') == 'staff')
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          STSubmitFormScreen(data[index]),
+                                          STFormStatus(data[index]),
                                     ),
                                   );
-                                if (data[index]['type'] == 'quiz') {
-                                  if (!data[index]['completed']
-                                      .contains(sharedpref.getString('id')))
+                                if (sharedpref.getString('role') == 'student') {
+                                  if (data[index]['type'] == 'form' ||
+                                      data[index]['type'] == 'ack')
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            IntroQuizScreen(data[index]),
+                                            STSubmitFormScreen(data[index]),
                                       ),
                                     );
-                                  else
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      customSnackBar(
-                                        content: 'Already Completed',
-                                      ),
-                                    );
-                                }
-                              }
-                            },
-                            child: AnimationConfiguration.staggeredList(
-                              position: index,
-                              duration: const Duration(milliseconds: 375),
-                              child: SlideAnimation(
-                                verticalOffset: 50.0,
-                                child: FadeInAnimation(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: new Container(
-                                      height: 150,
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Neumorphic(
-                                        style: NeumorphicStyle(
-                                          shape: NeumorphicShape.flat,
-                                          // depth: 20, //customize depth here
-                                          color: Colors.white,
-                                          border: NeumorphicBorder(
-                                            color: Color.fromRGBO(
-                                                193, 214, 233, 1),
-                                            width: 0.8,
-                                          ),
+                                  if (data[index]['type'] == 'quiz') {
+                                    if (!data[index]['completed']
+                                        .contains(sharedpref.getString('id')))
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              IntroQuizScreen(data[index]),
                                         ),
-                                        child: new Container(
-                                          width: 40.0,
-                                          height: 100.0,
-                                          decoration: BoxDecoration(
-                                            border: Border(
-                                              left: BorderSide(
-                                                color: data[index]['type'] ==
-                                                        'form'
-                                                    ? Colors.green
-                                                    : data[index]['type'] !=
-                                                            'quiz'
-                                                        ? Colors.red
-                                                        : Colors.blue,
-                                                width: 5,
-                                              ),
+                                      );
+                                    else
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        customSnackBar(
+                                          content: 'Already Completed',
+                                        ),
+                                      );
+                                  }
+                                }
+                              },
+                              child: AnimationConfiguration.staggeredList(
+                                position: index,
+                                duration: const Duration(milliseconds: 375),
+                                child: SlideAnimation(
+                                  verticalOffset: 50.0,
+                                  child: FadeInAnimation(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: new Container(
+                                        height: 150,
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Neumorphic(
+                                          style: NeumorphicStyle(
+                                            shape: NeumorphicShape.flat,
+                                            // depth: 20, //customize depth here
+                                            color: Colors.white,
+                                            border: NeumorphicBorder(
+                                              color: Color.fromRGBO(
+                                                  193, 214, 233, 1),
+                                              width: 0.8,
                                             ),
                                           ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .5,
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                    top: 8.0,
-                                                    left: 24,
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        data[index]['title']!
-                                                            .toString()
-                                                            .capitalizeFirstofEach,
-                                                        style: TextStyle(
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.brown,
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      if (isStaff)
-                                                        Text(
-                                                          data[index]['class']!
-                                                              .toString(),
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Colors.grey,
-                                                          ),
-                                                        ),
-                                                      if (!isStaff)
-                                                        Text(
-                                                          data[index][
-                                                                  'creatorName']!
-                                                              .toString(),
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Colors.grey,
-                                                          ),
-                                                        ),
-                                                      SizedBox(
-                                                        height: 10,
-                                                      ),
-                                                      Text(
-                                                        data[index]['lastDate'],
-                                                        style: TextStyle(
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: Colors.grey,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
+                                          child: new Container(
+                                            width: 40.0,
+                                            height: 100.0,
+                                            decoration: BoxDecoration(
+                                              border: Border(
+                                                left: BorderSide(
+                                                  color: data[index]['type'] ==
+                                                          'form'
+                                                      ? Colors.green
+                                                      : data[index]['type'] !=
+                                                              'quiz'
+                                                          ? Colors.red
+                                                          : Colors.blue,
+                                                  width: 5,
                                                 ),
                                               ),
-                                              SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .05,
-                                              ),
-                                              PieChartView(data[index]),
-                                            ],
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .5,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      top: 8.0,
+                                                      left: 24,
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          data[index]['title']!
+                                                              .toString()
+                                                              .capitalizeFirstofEach,
+                                                          style: TextStyle(
+                                                            fontSize: 20,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.brown,
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        if (isStaff)
+                                                          Text(
+                                                            data[index]
+                                                                    ['class']!
+                                                                .toString(),
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.grey,
+                                                            ),
+                                                          ),
+                                                        if (!isStaff)
+                                                          Text(
+                                                            data[index][
+                                                                    'creatorName']!
+                                                                .toString(),
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.grey,
+                                                            ),
+                                                          ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Text(
+                                                          data[index]
+                                                              ['lastDate'],
+                                                          style: TextStyle(
+                                                            fontSize: 13,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .05,
+                                                ),
+                                                PieChartView(data[index]),
+                                              ],
+                                            ),
+                                            alignment: Alignment.center,
                                           ),
-                                          alignment: Alignment.center,
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
+                            );
+                          },
+                          scrollDirection: Axis.vertical,
+                          itemCount: data.length,
+                        ),
+                      );
+                    else
+                      return Container(
+                          // child: Text(
+                          //   'You are done',
+                          //   style: TextStyle(
+                          //     fontWeight: FontWeight.bold,
+                          //   ),
+                          //   textAlign: TextAlign.center,
+                          // ),
                           );
-                        },
-                        scrollDirection: Axis.vertical,
-                        itemCount: data.length,
-                      ),
-                    );
                   }),
                 ),
               ],

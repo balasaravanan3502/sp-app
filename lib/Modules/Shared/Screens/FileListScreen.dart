@@ -65,7 +65,7 @@ class _DisplayFileState extends State<DisplayFile> {
     // isStaff = sharedpref.getString('role') == 'staff';
     materials = await provider.getMaterialBySuject(
         {"role": 'staff', "subjectName": widget.subjectName});
-    print('bala');
+    print(materials);
     isLoading = false;
     setState(() {});
     return 'completed';
@@ -108,13 +108,13 @@ class _DisplayFileState extends State<DisplayFile> {
           color: Colors.black,
           progressIndicator: uploadLoading
               ? Container(
-                  height: MediaQuery.of(context).size.height * 0.5,
-                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: MediaQuery.of(context).size.height * 0.48,
+                  width: MediaQuery.of(context).size.width * 0.75,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 15.0),
                         child: Container(
                           height: MediaQuery.of(context).size.height * 0.1,
                           child: Text(
@@ -122,7 +122,7 @@ class _DisplayFileState extends State<DisplayFile> {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize:
-                                  MediaQuery.of(context).size.height * 0.025,
+                                  MediaQuery.of(context).size.height * 0.02,
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
                             ),
@@ -156,7 +156,7 @@ class _DisplayFileState extends State<DisplayFile> {
                         ),
                       ),
                       SizedBox(
-                        height: 25.0,
+                        height: 15.0,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -174,7 +174,7 @@ class _DisplayFileState extends State<DisplayFile> {
                             style: ElevatedButton.styleFrom(
                               primary: Colors.green,
                               padding: EdgeInsets.symmetric(
-                                  vertical: 17.0, horizontal: 30.0),
+                                  vertical: 13.0, horizontal: 25.0),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20.0)),
                             ),
@@ -195,7 +195,7 @@ class _DisplayFileState extends State<DisplayFile> {
                             style: ElevatedButton.styleFrom(
                               primary: Colors.red,
                               padding: EdgeInsets.symmetric(
-                                  vertical: 17.0, horizontal: 30.0),
+                                  vertical: 13.0, horizontal: 25.0),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20.0)),
                             ),
@@ -216,8 +216,8 @@ class _DisplayFileState extends State<DisplayFile> {
                       children: [
                         Center(
                           child: Container(
-                            height: MediaQuery.of(context).size.height * 0.4,
-                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.3,
+                            width: MediaQuery.of(context).size.width * 0.6,
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -225,8 +225,8 @@ class _DisplayFileState extends State<DisplayFile> {
                                     child: Column(
                                       children: [
                                         Container(
-                                          height: 150,
-                                          width: 150,
+                                          height: 100,
+                                          width: 100,
                                           child: Lottie.asset(
                                               'assets/animation/1870-check-mark-done.json',
                                               repeat: false),
@@ -239,7 +239,7 @@ class _DisplayFileState extends State<DisplayFile> {
                                                 .toUpperCase(),
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
-                                                fontSize: 20,
+                                                fontSize: 15,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.black),
                                           ),
@@ -261,8 +261,8 @@ class _DisplayFileState extends State<DisplayFile> {
                   : Stack(
                       children: [
                         Container(
-                          height: MediaQuery.of(context).size.height * 0.4,
-                          width: MediaQuery.of(context).size.width * 0.8,
+                          height: MediaQuery.of(context).size.height * 0.3,
+                          width: MediaQuery.of(context).size.width * 0.6,
                           child: Center(
                             child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -271,8 +271,8 @@ class _DisplayFileState extends State<DisplayFile> {
                                     child: Column(
                                       children: [
                                         Container(
-                                          height: 150,
-                                          width: 150,
+                                          height: 100,
+                                          width: 100,
                                           child: Lottie.asset(
                                             'assets/animation/60041-upload.json',
                                           ),
@@ -283,7 +283,7 @@ class _DisplayFileState extends State<DisplayFile> {
                                           child: Text(
                                             'File is being uploaded',
                                             style: TextStyle(
-                                                fontSize: 20,
+                                                fontSize: 15,
                                                 fontWeight: FontWeight.bold,
                                                 color: Colors.black),
                                           ),
@@ -459,13 +459,16 @@ class _DisplayFileState extends State<DisplayFile> {
                                                           vertical: 15.0,
                                                           horizontal: 8),
                                                       child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceAround,
                                                         children: [
                                                           Container(
                                                             width: MediaQuery.of(
                                                                         context)
                                                                     .size
                                                                     .width *
-                                                                .3,
+                                                                .2,
                                                             child: Image.asset(
                                                               'assets/icons/pdf.png',
                                                             ),
@@ -594,7 +597,7 @@ class _DisplayFileState extends State<DisplayFile> {
                                                                             (BuildContext context) =>
                                                                                 AlertDialog(
                                                                           title:
-                                                                              const Text('Are you sure to publish the material?'),
+                                                                              const Text('Are you sure to reject the material?'),
                                                                           actions: <
                                                                               Widget>[
                                                                             TextButton(
@@ -788,6 +791,19 @@ class _DisplayFileState extends State<DisplayFile> {
                                                           ),
 
                                                           // ends here
+                                                        ),
+                                                        InkWell(
+                                                          child: Center(
+                                                            child: Container(
+                                                              color: Colors
+                                                                  .transparent,
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.47,
+                                                            ),
+                                                          ),
                                                         ),
                                                         Visibility(
                                                           // here the loadig screen file goes

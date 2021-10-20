@@ -81,7 +81,7 @@ class _SubjectListScreenState extends State<SubjectListScreen> {
                               subjectList[index],
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 15,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.indigo),
                             ),

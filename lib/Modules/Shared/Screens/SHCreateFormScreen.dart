@@ -251,6 +251,20 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
               child: AppBar(
                 backgroundColor: Colors.white,
                 elevation: 0,
+                leading: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SHHomeScreen(widget.name),
+                      ),
+                    );
+                  },
+                ),
                 centerTitle: true,
                 title: Text(
                   widget.type == 'form'
@@ -337,6 +351,9 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                             onTap: () {
                               _datePicker();
                             },
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
                             focusNode: NoKeyboardEditableTextFocusNode(),
                             decoration: kTextFieldDecoration.copyWith(
                               contentPadding: EdgeInsets.only(
@@ -504,6 +521,9 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                                                 'Option A',
                                                           ),
                                                           maxLines: null,
+                                                          initialValue: options[
+                                                                  index]
+                                                              ['options'][0],
                                                           keyboardType:
                                                               TextInputType
                                                                   .multiline,
@@ -544,6 +564,9 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                                                 'Option B',
                                                           ),
                                                           maxLines: null,
+                                                          initialValue: options[
+                                                                  index]
+                                                              ['options'][1],
                                                           keyboardType:
                                                               TextInputType
                                                                   .multiline,
@@ -584,6 +607,9 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                                                 'Option C',
                                                           ),
                                                           maxLines: null,
+                                                          initialValue: options[
+                                                                  index]
+                                                              ['options'][2],
                                                           keyboardType:
                                                               TextInputType
                                                                   .multiline,
@@ -624,6 +650,9 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                                                 'Option D',
                                                           ),
                                                           maxLines: null,
+                                                          initialValue: options[
+                                                                  index]
+                                                              ['options'][3],
                                                           keyboardType:
                                                               TextInputType
                                                                   .multiline,
@@ -691,7 +720,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                         Radius.circular(20),
                                       ),
                                     ),
-                                    height: isExpanded[index] ? 150 : 0,
+                                    height: isExpanded[index] ? 120 : 0,
                                     duration: Duration(milliseconds: 400),
                                     child: isExpanded[index]
                                         ? Row(
@@ -700,7 +729,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                             children: [
                                               Container(
                                                 margin:
-                                                    EdgeInsets.only(top: 25),
+                                                    EdgeInsets.only(top: 15),
                                                 child: Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
@@ -784,57 +813,6 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                                               ],
                                                             ),
                                                           ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        5.0),
-                                                            child: Row(
-                                                              children: [
-                                                                Radio(
-                                                                  value: 2,
-                                                                  groupValue:
-                                                                      _radioSelected[
-                                                                          index],
-                                                                  activeColor:
-                                                                      Color(
-                                                                          0xff0A662F),
-                                                                  onChanged:
-                                                                      (value) {
-                                                                    setState(
-                                                                        () {
-                                                                      _radioSelected[
-                                                                              index] =
-                                                                          int.parse(
-                                                                              value.toString());
-                                                                      _radioType[
-                                                                              index] =
-                                                                          'Options';
-                                                                      _onUpdate(
-                                                                          index,
-                                                                          '',
-                                                                          _radioType[
-                                                                              index],
-                                                                          required[
-                                                                              index]);
-                                                                    });
-                                                                  },
-                                                                ),
-                                                                Text(
-                                                                  'Options',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
                                                         ],
                                                       ),
                                                     ),
@@ -903,7 +881,7 @@ class _SHCreateFormScreenState extends State<SHCreateFormScreen> {
                                                           ),
                                                         ),
                                                         SizedBox(
-                                                          height: 50,
+                                                          height: 25,
                                                         ),
                                                         Row(
                                                           mainAxisAlignment:

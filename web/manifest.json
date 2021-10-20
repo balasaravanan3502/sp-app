@@ -1,11 +1,11 @@
 {
-    "name": "sp_app",
-    "short_name": "sp_app",
+    "name": "straw_boss",
+    "short_name": "straw_boss",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "Software Project",
+    "description": "A new Flutter project.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

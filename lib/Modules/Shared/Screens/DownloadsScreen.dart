@@ -109,14 +109,15 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                   margin: EdgeInsets.all(1),
                   child: Container(
                     height: MediaQuery.of(context).size.height * 0.2,
-                    width: MediaQuery.of(context).size.height * 1,
+                    width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                        border: Border.all(
-                          width: 0.5,
-                          color: Colors.black,
-                        )),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      border: Border.all(
+                        width: 0.5,
+                        color: Colors.black,
+                      ),
+                    ),
                     margin: EdgeInsets.all(10),
                     child: Stack(
                       children: [
@@ -124,7 +125,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                           children: [
                             Container(
                               height: MediaQuery.of(context).size.height * 0.24,
-                              width: MediaQuery.of(context).size.height * 0.2,
+                              width: MediaQuery.of(context).size.width * 0.4,
                               child: (pageimage.length != 0)
                                   ? Container(
                                       decoration: BoxDecoration(
@@ -136,10 +137,11 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                                           ),
                                         ),
                                       ),
+                                      height: 100,
                                       child: Image(
                                         height:
                                             MediaQuery.of(context).size.height *
-                                                0.24,
+                                                0.1,
                                         image: MemoryImage(
                                             pageimage[index]!.bytes),
                                       ),
@@ -147,9 +149,8 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                                   : Container(),
                             ),
                             Container(
-                              
                                 padding: EdgeInsets.only(
-                                    top:  MediaQuery.of(context).size.width *
+                                    top: MediaQuery.of(context).size.width *
                                         0.01,
                                     bottom: MediaQuery.of(context).size.width *
                                         0.001,
@@ -157,33 +158,31 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                                         0.01),
                                 height:
                                     MediaQuery.of(context).size.height * 0.2,
-                                width: MediaQuery.of(context).size.height * 0.2,
+                                width: MediaQuery.of(context).size.width * 0.4,
                                 child: Column(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceAround,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Container(
-                                        child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          file_name[index].toUpperCase(),
-                                          style: TextStyle(
-                                            fontSize: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.01,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            file_name[index],
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                      ],
-                                    )),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,
@@ -207,15 +206,18 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                                               );
                                               // selectFile();
                                             },
-                                            child: Icon(Icons.share),
+                                            child: Icon(
+                                              Icons.share,
+                                              size: 19,
+                                            ),
                                             style: ElevatedButton.styleFrom(
                                               elevation: 0,
                                               padding: EdgeInsets.all(0),
                                               primary: Color(0xff6E7FFC),
                                               shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20.0)),
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -268,15 +270,18 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                                                 ),
                                               );
                                             },
-                                            child: Icon(Icons.delete),
+                                            child: Icon(
+                                              Icons.delete,
+                                              size: 19,
+                                            ),
                                             style: ElevatedButton.styleFrom(
                                               elevation: 0,
-                                              padding: EdgeInsets.all(9),
+                                              padding: EdgeInsets.all(0),
                                               primary: Color(0xff6E7FFC),
                                               shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20.0)),
+                                                borderRadius:
+                                                    BorderRadius.circular(20.0),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -314,14 +319,17 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                           children: [
                             SvgPicture.asset(
                               'assets/icons/Download-cuate.svg',
-                              height: MediaQuery.of(context).size.height * 0.4,
-                              width: MediaQuery.of(context).size.width * 0.6,
+                              height: MediaQuery.of(context).size.height * 0.3,
+                              width: MediaQuery.of(context).size.width * 0.5,
+                            ),
+                            SizedBox(
+                              height: 30,
                             ),
                             Text(
                               'NO downloads'.toUpperCase(),
                               style: TextStyle(
                                 fontSize:
-                                    MediaQuery.of(context).size.height * 0.03,
+                                    MediaQuery.of(context).size.height * 0.02,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),

@@ -192,6 +192,7 @@ class _STSubmitFormScreenState extends State<STSubmitFormScreen> {
               child: Form(
                 key: _formKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     if (widget.data['type'] != 'ack')
                       Flexible(
@@ -281,10 +282,19 @@ class _STSubmitFormScreenState extends State<STSubmitFormScreen> {
                                                       hintText: ' ',
                                                     ),
                                                     initialValue: isCompleted
-                                                        ? widget.data[
-                                                                    'completedData']
-                                                                ['answers']
-                                                            [index]['answer']
+                                                        ? widget
+                                                                        .data[
+                                                                            'completedData']
+                                                                            [
+                                                                            'answers']
+                                                                        .length -
+                                                                    1 >
+                                                                index
+                                                            ? widget.data[
+                                                                        'completedData']
+                                                                    ['answers'][
+                                                                index]['answer']
+                                                            : ""
                                                         : null,
                                                     validator: (val) {
                                                       if (data[index]
@@ -543,6 +553,7 @@ class _STSubmitFormScreenState extends State<STSubmitFormScreen> {
                           vertical: MediaQuery.of(context).size.height * 0.01,
                           horizontal: MediaQuery.of(context).size.height * 0.01,
                         ),
+                        alignment: Alignment.center,
                         child: Text(
                           widget.data['questions'][0]['question'],
                           style: TextStyle(

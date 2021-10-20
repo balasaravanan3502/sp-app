@@ -57,8 +57,8 @@ class _DisplayPDFState extends State<DisplayPDF>
             children: [
               Center(
                 child: Container(
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  width: MediaQuery.of(context).size.width * 0.4,
+                  height: 160,
+                  width: 150,
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -74,14 +74,12 @@ class _DisplayPDFState extends State<DisplayPDF>
                                   'assets/animation/5679-download-ui-animation.json',
                                 ),
                               ),
-                              SizedBox(
-                                height: 7,
-                              ),
                               Padding(
                                 padding: EdgeInsets.symmetric(
-                                    vertical: 30.0, horizontal: 0.0),
+                                    vertical: 15.0, horizontal: 0.0),
                                 child: Text(
-                                  'Downloading file'.toUpperCase(),
+                                  'Downloading\nfile'.toUpperCase(),
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -95,7 +93,7 @@ class _DisplayPDFState extends State<DisplayPDF>
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.all(
-                      Radius.circular(40.0),
+                      Radius.circular(20.0),
                     ),
                   ),
                 ),

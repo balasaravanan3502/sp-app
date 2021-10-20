@@ -1,6 +1,6 @@
-# sp_app
+# straw_boss
 
-Software Project
+A new Flutter project.
 
 ## Getting Started
 
